@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    volumes:
+      - .:/app
+      - /app/__pycache__
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://companyhub:password@db:5432/companyhub}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
+      - REGON_API_KEY=${REGON_API_KEY:-}
+      - IBAN_API_KEY=${IBAN_API_KEY:-}
+      - REGON_API_URL=${REGON_API_URL:-https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc}
+      - MF_API_URL=${MF_API_URL:-https://wl-api.mf.gov.pl}
+      - VIES_API_URL=${VIES_API_URL:-http://ec.europa.eu/taxation_customs/vies/services/checkVatService}
+      - IBAN_API_URL=${IBAN_API_URL:-https://api.iban.com/clients/api}
+      - CACHE_TTL_DEFAULT=${CACHE_TTL_DEFAULT:-86400}
+      - CACHE_TTL_BANK_ACCOUNTS=${CACHE_TTL_BANK_ACCOUNTS:-604800}
+      - RATE_LIMIT_FREE_TIER=${RATE_LIMIT_FREE_TIER:-5}
+      - RATE_LIMIT_PREMIUM_TIER=${RATE_LIMIT_PREMIUM_TIER:-1000}
+    depends_on:
+      - db
+      - redis
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - companyhub-network
+
+  db:
+    image: postgres:17
+    environment:
+      - POSTGRES_DB=companyhub
+      - POSTGRES_USER=companyhub
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docs/database-schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    networks:
+      - companyhub-network
+
+  redis:
+    image: redis:8-alpine
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - companyhub-network
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - "${ADMINER_PORT:-8080}:8080"
+    depends_on:
+      - db
+    networks:
+      - companyhub-network
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "${REDIS_COMMANDER_PORT:-8081}:8081"
+    depends_on:
+      - redis
+    networks:
+      - companyhub-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  companyhub-network:
+    driver: bridge

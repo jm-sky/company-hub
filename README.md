@@ -37,9 +37,9 @@
 
 ### Prerequisites
 
-- Python 3.9+
-- PostgreSQL 12+
-- Redis 6+
+- Python 3.12+
+- PostgreSQL 17+
+- Redis 8+
 
 ### Installation
 
