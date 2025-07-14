@@ -1,0 +1,13 @@
+{
+    "recommendations": [
+        "mikestead.dotenv",
+        "ms-python.python",
+        "wmaurer.change-case",
+        "ms-azuretools.vscode-containers",
+        "editorconfig.editorconfig",
+        "dbaeumer.vscode-eslint",
+        "ms-python.flake8",
+        "eamodio.gitlens",
+        "bradlc.vscode-tailwindcss"
+    ]
+}
