@@ -1,0 +1,11 @@
+[flake8]
+extend-ignore = E203, E302, E303, E501, E261
+exclude =
+  .venv,
+  .git,
+  __pycache__,
+  docs,
+  dist,
+  src,
+  node_modules
+max-complexity = 50
