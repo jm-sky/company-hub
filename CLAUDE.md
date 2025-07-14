@@ -20,14 +20,17 @@ This is a documentation-first project currently in the planning phase. The syste
 
 ## Data Providers
 
-The system integrates with four main external data sources:
-
+### Core Company Data Providers:
 1. **REGON (GUS API)** - Polish business registry
-2. **MF (Biała Lista)** - Polish VAT whitelist
+2. **MF (Biała Lista)** - Polish VAT whitelist  
 3. **VIES** - EU VAT validation system (SOAP/XML)
-4. **IBAN API** - Bank account validation
+
+### Enrichment Services:
+4. **IBAN API** - Bank account enrichment for accounts found in MF data
 
 Each provider has detailed documentation in `docs/providers/[provider]/`.
+
+**Note:** IBAN API is used as an enrichment service to add bank details (name, currency, validation) to bank accounts returned by MF API, rather than as a direct company data provider.
 
 ## Key Features
 
