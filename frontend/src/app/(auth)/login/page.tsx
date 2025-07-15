@@ -24,6 +24,10 @@ export default function LoginPage() {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormData>({
+    defaultValues: {
+      email: process.env.NEXT_PUBLIC_DEFAULT_LOGIN_EMAIL,
+      password: process.env.NEXT_PUBLIC_DEFAULT_LOGIN_PASSWORD,
+    },
     resolver: zodResolver(loginSchema),
   });
 
