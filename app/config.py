@@ -41,6 +41,10 @@ class Settings(BaseSettings):
     cors_allow_methods: str = "GET,POST,PUT,DELETE,OPTIONS"
     cors_allow_headers: str = "*"
 
+    # Admin user settings
+    admin_email: str = "admin@companyhub.com"
+    admin_password: str = "admin123"
+
     class Config:
         env_file = ".env"
         extra = "ignore"

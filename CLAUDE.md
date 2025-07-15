@@ -75,6 +75,22 @@ Each provider has detailed documentation in `docs/providers/[provider]/`.
 - **Phase 3**: Add Russian if user demand justifies it
 - **Target**: Polish-first approach (90% of users from Poland)
 
+### Additional Component Libraries
+
+#### Origin UI (https://github.com/origin-space/originui)
+- **Components**: Input (59), Button (54), general UI elements
+- **No specific auth components** - use base components for forms
+- **Usage**: Copy `.tsx` files to `components/ui`, add CSS variables
+- **Compatible with**: shadcn/ui, Tailwind CSS v4
+
+#### MVP Blocks (https://github.com/subhadeeproy3902/mvpblocks)
+- **Components**: Claims 100+ blocks but no visible auth-specific components
+- **Tech**: Next.js, TypeScript, TailwindCSS, Framer Motion
+- **Usage**: Copy blocks directly into project
+- **Status**: Repository structure unclear, no specific auth components identified
+
+**Recommendation**: Current auth pages are well-implemented. Component libraries offer visual enhancements but no auth-specific functionality. Priority: complete real JWT authentication first.
+
 ## Deployment Strategy
 
 Planned deployment approach:
