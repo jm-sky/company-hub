@@ -35,8 +35,15 @@ class Settings(BaseSettings):
     rate_limit_free_tier: int = 5  # requests per hour
     rate_limit_premium_tier: int = 1000  # requests per hour
 
+    # CORS settings
+    cors_origins: str = "http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001"
+    cors_allow_credentials: bool = True
+    cors_allow_methods: str = "GET,POST,PUT,DELETE,OPTIONS"
+    cors_allow_headers: str = "*"
+
     class Config:
         env_file = ".env"
+        extra = "ignore"
 
 
 settings = Settings()

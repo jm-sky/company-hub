@@ -63,6 +63,9 @@ docs/
 README.md
 LICENSE
 
+# Frontend
+frontend/
+
 # Tests
 tests/
 .pytest_cache/

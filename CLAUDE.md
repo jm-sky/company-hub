@@ -10,8 +10,8 @@ CompanyHub is a centralized API service for fetching, aggregating, and providing
 
 This is a documentation-first project currently in the planning phase. The system is designed around:
 
-- **Tech Stack**: Python + FastAPI
-- **UI**: SSR + HTMX for lightweight, fast user panel
+- **Tech Stack**: Python + FastAPI (Backend), Next.js + TypeScript (Frontend)
+- **UI**: Next.js with shadcn/ui components and Tailwind CSS v4
 - **External Data Sources**: REGON (GUS API), MF (Biała Lista), VIES, IBAN API
 - **Data Strategy**: Local caching with TTL, historical change tracking with diffs
 - **API Design**: REST with versioning (`/api/v1/companies/{nip}`), JSON responses
@@ -47,6 +47,33 @@ Each provider has detailed documentation in `docs/providers/[provider]/`.
 - Architecture decisions are documented in `docs/architecture.md`
 - Provider schemas and specifications are in `docs/providers/`
 - The project follows Polish business data requirements and regulations
+
+## Frontend Development Guidelines
+
+### Styling Standards
+- **Use Tailwind v4 size utilities**: `size-4` instead of `h-4 w-4`
+- **Use semantic design system colors**: 
+  - `text-destructive` instead of `text-red-500`
+  - `text-muted-foreground` for secondary text
+  - `text-brand` for brand colors
+  - `border-destructive` for error borders
+  - `bg-background` for main background
+- **Use shadcn/ui semantic classes**: Follow the design system tokens
+- **Consistent spacing**: Use spacing scale (space-y-4, gap-2, etc.)
+- **Responsive design**: Mobile-first approach with sm:, md:, lg: breakpoints
+
+### Component Architecture
+- **shadcn/ui components**: Use for all UI elements (Button, Input, Card, Alert, etc.)
+- **TypeScript**: Strict typing for all components and API calls
+- **React Hook Form + Zod**: For form validation and handling
+- **React Query**: For server state management and caching
+- **Proper error handling**: Use Alert components for user feedback
+
+### Internationalization Plan
+- **Phase 1**: Build in English only (current)
+- **Phase 2**: Add Polish (primary) + English before MVP launch
+- **Phase 3**: Add Russian if user demand justifies it
+- **Target**: Polish-first approach (90% of users from Poland)
 
 ## Deployment Strategy
 
