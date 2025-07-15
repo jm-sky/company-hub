@@ -9,6 +9,7 @@ import {
   SearchCompaniesResponse,
   SubscriptionInfo,
   CheckoutSession,
+  SubscriptionTier,
 } from '@/types/api';
 
 class ApiClient {
@@ -162,7 +163,7 @@ class ApiClient {
     return response.data;
   }
 
-  async createCheckoutSession(tier: 'pro' | 'enterprise'): Promise<ApiResponse<CheckoutSession>> {
+  async createCheckoutSession(tier: Exclude<SubscriptionTier, 'free'>): Promise<ApiResponse<CheckoutSession>> {
     const response = await this.client.post('/api/v1/billing/checkout', { tier });
     return response.data;
   }

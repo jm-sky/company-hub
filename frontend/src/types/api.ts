@@ -1,3 +1,8 @@
+// Union types
+export type CompanyStatus = 'active' | 'inactive';
+export type VatStatus = 'active' | 'inactive' | 'exempt';
+export type SubscriptionTier = 'free' | 'pro' | 'enterprise';
+
 export interface ApiResponse<T = unknown> {
   data: T;
   message?: string;
@@ -8,14 +13,14 @@ export interface Company {
   nip: string;
   name: string;
   regon?: string;
-  status: 'active' | 'inactive';
+  status: CompanyStatus;
   address?: {
     street: string;
     city: string;
     postal_code: string;
     country: string;
   };
-  vat_status?: 'active' | 'inactive' | 'exempt';
+  vat_status?: VatStatus;
   bank_accounts?: Array<{
     account_number: string;
     bank_name?: string;
@@ -30,7 +35,7 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  subscription_tier: 'free' | 'pro' | 'enterprise';
+  subscription_tier: SubscriptionTier;
   api_calls_used: number;
   api_calls_limit: number;
   created_at: string;
@@ -78,7 +83,7 @@ export interface SearchCompaniesResponse {
 }
 
 export interface SubscriptionInfo {
-  tier: string;
+  tier: SubscriptionTier;
   usage: number;
   limit: number;
 }

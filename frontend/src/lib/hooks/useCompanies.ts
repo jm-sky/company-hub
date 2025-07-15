@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../api';
-import { Company } from '@/types/api';
 
 export const useCompany = (nip: string) => {
   return useQuery({
