@@ -3,31 +3,18 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useUser } from '@/lib/hooks/useAuth'
+import LandingPage from '@/components/landing/landing-page'
 
 export default function Home() {
   const { data: user, isLoading } = useUser()
   const router = useRouter()
 
+  // Auto-redirect authenticated users to dashboard
   useEffect(() => {
-    if (!isLoading) {
-      if (user) {
-        router.replace('/dashboard')
-      } else {
-        router.replace('/login')
-      }
+    if (!isLoading && user) {
+      router.replace('/dashboard')
     }
   }, [user, isLoading, router])
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    )
-  }
-
-  return null
+  return <LandingPage />
 }

@@ -58,6 +58,6 @@ export const useUser = () => {
       const response = await apiClient.getProfile();
       return response.data;
     },
-    enabled: !!localStorage.getItem('auth_token'),
+    enabled: typeof window !== 'undefined' && !!localStorage.getItem('auth_token'),
   });
 };
