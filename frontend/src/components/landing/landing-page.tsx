@@ -52,7 +52,7 @@ export default function LandingPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-hidden">
       {/* Navigation */}
       <nav className="relative z-50 border-b border-border/40 bg-background/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 md:px-6">
@@ -79,8 +79,8 @@ export default function LandingPage() {
       </nav>
 
       <motion.div
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
+        initial={{ opacity: 0, scale: 1.2 }}
+        animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.8, delay: 0.2 }}
         className="flex items-center justify-center"
       >
@@ -123,7 +123,7 @@ export default function LandingPage() {
               <ButtonLink
                 size="lg" 
                 variant="outline" 
-                href="/login"
+                href="/docs"
               >
                 View Documentation
               </ButtonLink>
@@ -145,7 +145,14 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-muted/50">
+      <section className="py-20 bg-muted/50 relative">
+        {/* Colorful Light Effects */}
+        <div className="absolute inset-0 overflow-hidden opacity-80">
+          <div className="absolute top-0 left-0 size-96 bg-gradient-to-r from-brand/30 to-brand/10 rounded-full blur-3xl" />
+          <div className="absolute top-1/3 right-1/8 size-80 bg-gradient-to-r from-brand/25 to-brand/15 rounded-full blur-3xl" style={{ animationDelay: '1s' }} />
+          <div className="absolute bottom-1/3 right-1/2 size-56 bg-gradient-to-r from-brand/25 to-brand/15 rounded-full blur-3xl" style={{ animationDelay: '1.5s' }} />
+        </div> 
+
         <div className="container mx-auto px-4 md:px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
