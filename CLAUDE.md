@@ -48,6 +48,11 @@ Each provider has detailed documentation in `docs/providers/[provider]/`.
 - Provider schemas and specifications are in `docs/providers/`
 - The project follows Polish business data requirements and regulations
 
+## Package Management
+
+- **Frontend**: Use `pnpm` for package management (not npm or yarn)
+- **Backend**: Use `pip` with requirements.txt files
+
 ## Frontend Development Guidelines
 
 ### Styling Standards
