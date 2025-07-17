@@ -4,13 +4,21 @@ services:
       context: .
       dockerfile: Dockerfile.prod
     ports:
-      - "8000:8000"
+      - "${DOCKER_APP_PORT:-8000}:8000"
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
       - SECRET_KEY=${SECRET_KEY}
       - REGON_API_KEY=${REGON_API_KEY}
       - IBAN_API_KEY=${IBAN_API_KEY}
+      - REGON_API_URL=${REGON_API_URL}
+      - MF_API_URL=${MF_API_URL}
+      - VIES_API_URL=${VIES_API_URL}
+      - IBAN_API_URL=${IBAN_API_URL}
+      - CACHE_TTL_DEFAULT=${CACHE_TTL_DEFAULT}
+      - CACHE_TTL_BANK_ACCOUNTS=${CACHE_TTL_BANK_ACCOUNTS}
+      - RATE_LIMIT_FREE_TIER=${RATE_LIMIT_FREE_TIER}
+      - RATE_LIMIT_PREMIUM_TIER=${RATE_LIMIT_PREMIUM_TIER}
     depends_on:
       - db
       - redis
@@ -36,20 +44,6 @@ services:
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes
-    restart: unless-stopped
-    networks:
-      - companyhub-network
-
-  nginx:
-    image: nginx:1.28-alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl:/etc/nginx/ssl:ro
-    depends_on:
-      - app
     restart: unless-stopped
     networks:
       - companyhub-network
