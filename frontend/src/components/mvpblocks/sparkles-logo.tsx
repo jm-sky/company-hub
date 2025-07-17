@@ -6,20 +6,21 @@ export default function SparklesLogo() {
   return (
     <div className="w-full bg-black flex flex-col items-center justify-center overflow-hidden">
       <h1 className="mt-20 md:text-7xl text-3xl lg:text-9xl font-bold text-center text-white relative z-20">
-        CompanyHub
+        <span className="bg-gradient-to-b from-white to-gray-300 bg-clip-text text-transparent">Company</span>
+        <span className="bg-gradient-to-r from-sky-400 via-blue-500 to-sky-400 bg-clip-text text-transparent">Hub</span>
       </h1>
-      <div className="w-[40rem] h-40 relative">
+      <div className="w-1/2 h-40 relative">
         {/* Gradients */}
-        <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-[2px] w-3/4 blur-sm" />
-        <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-px w-3/4" />
-        <div className="absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-[5px] w-1/4 blur-sm" />
-        <div className="absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-px w-1/4" />
+        <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-[3px] w-3/4 blur-sm" />
+        <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-[2px] w-3/4" />
+        <div className="absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-[8px] w-1/4 blur-sm" />
+        <div className="absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-[2px] w-1/4" />
 
         {/* Core component */}
         <SparklesCore
           background="transparent"
           minSize={0.4}
-          maxSize={1}
+          maxSize={1.5}
           particleDensity={1200}
           className="w-full h-full"
           particleColor="#FFFFFF"

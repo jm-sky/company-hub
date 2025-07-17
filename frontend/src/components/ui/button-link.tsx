@@ -7,6 +7,7 @@ import Link from "next/link"
 function ButtonLink({
   className,
   variant,
+  vibe,
   size,
   href,
   ...props
@@ -17,7 +18,7 @@ function ButtonLink({
 
   return (
     <Link
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(buttonVariants({ variant, size, className, vibe }))}
       href={href}
       {...props}
     />

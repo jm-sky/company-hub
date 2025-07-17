@@ -13,6 +13,7 @@ import {
 import { CardHoverEffect } from '../ui/pulse-card'
 import { useRef } from 'react'
 import { ButtonLink } from '../ui/button-link'
+import AddressFooter from './address-footer'
 
 export default function LandingPage() {
   const featuresRef = useRef(null);
@@ -115,10 +116,12 @@ export default function LandingPage() {
               <ButtonLink
                 size="lg" 
                 href="/register"
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                className="group"
+                variant="brand"
+                vibe="primary"
               >
                 Start Free Trial
-                <ArrowRight className="ml-2 size-4" />
+                <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
               </ButtonLink>
               <ButtonLink
                 size="lg" 
@@ -187,7 +190,7 @@ export default function LandingPage() {
                   title={feature.title}
                   description={feature.description}
                   glowEffect={true}
-                  variant="brand"
+                  variant="blue"
                   size="lg"
                 />
               </motion.div>
@@ -216,10 +219,12 @@ export default function LandingPage() {
               <ButtonLink
                 size="lg" 
                 href="/register"
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                variant="brand"
+                vibe="primary"
+                className="group"
               >
                 Start Free Trial
-                <ArrowRight className="ml-2 size-4" />
+                <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
               </ButtonLink>
               <ButtonLink
                 size="lg" 
@@ -232,6 +237,8 @@ export default function LandingPage() {
           </motion.div>
         </div>
       </section>
+
+      <AddressFooter />
     </div>
   )
 }

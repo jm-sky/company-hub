@@ -9,14 +9,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
-        outline:
-          "border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+        default: "bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
+        brand: "bg-brand text-brand-foreground shadow-sm hover:bg-brand/90",
+        destructive: "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40",
+        outline: "border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
       },
@@ -26,10 +23,15 @@ const buttonVariants = cva(
         lg: "h-10 rounded-md px-8",
         icon: "size-9",
       },
+      vibe: {
+        default: '',
+        primary: 'relative overflow-hidden shadow-2xl duration-300 before:-z-1 before:absolute before:size-0 before:rounded-full before:bg-white before:duration-200 before:ease-out hover:text-primary hover:shadow-primary-800/50 dark:hover:shadow-primary-300/50 hover:before:size-64 hover:before:blur-md hover:scale-110 hover:ring',
+      },
     },
     defaultVariants: {
       variant: "default",
       size: "default",
+      vibe: "default",
     },
   }
 )
@@ -37,6 +39,7 @@ const buttonVariants = cva(
 function Button({
   className,
   variant,
+  vibe,
   size,
   asChild = false,
   ...props
@@ -49,7 +52,7 @@ function Button({
   return (
     <Comp
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(buttonVariants({ variant, size, className, vibe }))}
       {...props}
     />
   )
