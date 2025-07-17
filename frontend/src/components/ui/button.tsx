@@ -25,7 +25,7 @@ const buttonVariants = cva(
       },
       vibe: {
         default: '',
-        primary: 'relative overflow-hidden shadow-2xl duration-300 before:-z-1 before:absolute before:size-0 before:rounded-full before:bg-white before:duration-200 before:ease-out hover:text-primary hover:shadow-primary-800/50 dark:hover:shadow-primary-300/50 hover:before:size-64 hover:before:blur-md hover:scale-110 hover:ring',
+        primary: 'relative overflow-hidden shadow-2xl duration-300 before:-z-1 before:absolute before:size-0 before:rounded-full before:bg-white before:duration-200 before:ease-out hover:text-brand hover:shadow-primary-800/50 dark:hover:shadow-primary-300/50 hover:before:size-64 hover:before:blur-md hover:scale-110 hover:ring',
       },
     },
     defaultVariants: {

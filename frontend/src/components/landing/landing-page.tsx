@@ -2,13 +2,13 @@
 
 import { motion, useInView } from 'framer-motion'
 import SparklesLogo from '@/components/mvpblocks/sparkles-logo'
-import { 
-  Building2, 
-  Search, 
-  Zap, 
-  Shield, 
+import {
+  Building2,
+  Search,
+  Zap,
+  Shield,
   ArrowRight,
-  CheckCircle 
+  CheckCircle
 } from 'lucide-react'
 import { CardHoverEffect } from '../ui/pulse-card'
 import { useRef } from 'react'
@@ -59,11 +59,13 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center">
-              <h1 className="text-xl font-bold text-foreground">CompanyHub</h1>
+              <h1 className="text-xl font-bold text-foreground">
+                Company<span className="text-brand">Hub</span>
+              </h1>
             </div>
             <div className="flex items-center gap-4">
               <ButtonLink
-                variant="ghost" 
+                variant="ghost"
                 href="/login"
               >
                 Login
@@ -101,31 +103,31 @@ export default function LandingPage() {
           >
             <div className="space-y-4">
               <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
-                Polish Company Data 
+                Polish Company Data
                 <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
                   {' '}API Platform
                 </span>
               </h1>
               <p className="text-xl text-muted-foreground max-w-[600px]">
-                Access comprehensive Polish business data from REGON, MF White List, and VIES. 
+                Access comprehensive Polish business data from REGON, MF White List, and VIES.
                 Perfect for compliance, due diligence, and business intelligence.
               </p>
             </div>
 
             <div className="flex flex-col gap-4 sm:flex-row">
               <ButtonLink
-                size="lg" 
+                size="lg"
                 href="/register"
                 className="group"
                 variant="brand"
                 vibe="primary"
               >
                 Start Free Trial
-                <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
-              </ButtonLink>
+                <ArrowRight className="ml-1 size-4 group-hover:translate-x-2 duration-500 transition-transform" />
+                </ButtonLink>
               <ButtonLink
-                size="lg" 
-                variant="outline" 
+                size="lg"
+                variant="outline"
                 href="/docs"
               >
                 View Documentation
@@ -154,7 +156,7 @@ export default function LandingPage() {
           <div className="absolute top-0 left-0 size-96 bg-gradient-to-r from-brand/30 to-brand/10 rounded-full blur-3xl" />
           <div className="absolute top-1/3 right-1/8 size-80 bg-gradient-to-r from-brand/25 to-brand/15 rounded-full blur-3xl" style={{ animationDelay: '1s' }} />
           <div className="absolute bottom-1/3 right-1/2 size-56 bg-gradient-to-r from-brand/25 to-brand/15 rounded-full blur-3xl" style={{ animationDelay: '1.5s' }} />
-        </div> 
+        </div>
 
         <div className="container mx-auto px-4 md:px-6">
           <motion.div
@@ -217,18 +219,18 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
               <ButtonLink
-                size="lg" 
+                size="lg"
                 href="/register"
                 variant="brand"
                 vibe="primary"
                 className="group"
               >
                 Start Free Trial
-                <ArrowRight className="ml-2 size-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="ml-1 size-4 group-hover:translate-x-2 duration-500 transition-transform" />
               </ButtonLink>
               <ButtonLink
-                size="lg" 
-                variant="outline" 
+                size="lg"
+                variant="outline"
                 href="/login"
               >
                 Sign In

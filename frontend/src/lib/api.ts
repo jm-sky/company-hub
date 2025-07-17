@@ -50,7 +50,7 @@ class ApiClient {
 
           if (!isAuthRequest) {
             this.clearAuth();
-            window.location.href = '/login';
+            window.location.href = '/login?reason=session-expired';
           }
         }
         return Promise.reject(error);
