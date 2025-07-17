@@ -91,6 +91,79 @@ Each provider has detailed documentation in `docs/providers/[provider]/`.
 
 **Recommendation**: Current auth pages are well-implemented. Component libraries offer visual enhancements but no auth-specific functionality. Priority: complete real JWT authentication first.
 
+## API & Type Patterns
+
+### Frontend API Client (`/lib/api.ts`)
+- **Standard Response Pattern**: All API endpoints return `ApiResponse<T>` where T is the specific data type
+- **Consistency**: Always use the generic `ApiResponse<T>` wrapper, never create custom response types
+- **Company Endpoint**: Returns `ApiResponse<CompanyResponse>` where CompanyResponse contains `data` and `metadata`
+
+### Type Definitions (`/types/api.ts`)
+- **Single Source of Truth**: All API types must be defined here
+- **Backend Matching**: Frontend types should match backend response structures
+- **Standard Wrapper**: `ApiResponse<T>` wraps all API responses with `data`, `message?`, and `success` fields
+
+### Example Usage:
+```typescript
+// API Client
+async getCompany(nip: string): Promise<ApiResponse<CompanyResponse>> {
+  const response = await this.client.get(`/api/v1/companies/${nip}`);
+  return response.data;
+}
+
+// ALWAYS use existing hooks instead of direct API calls
+import { useCompany, useCompanyRefresh } from '@/lib/hooks/useCompanies';
+
+// Component Usage - CORRECT
+const { data: companyResponse, isLoading, error } = useCompany(nip);
+// companyResponse is already CompanyResponse (data + metadata)
+
+// Component Usage - WRONG (don't duplicate query logic)
+const { data } = useQuery({
+  queryFn: () => apiClient.getCompany(nip)  // ❌ Hook already exists!
+});
+```
+
+### Existing Hooks to Use:
+- `useCompany(nip)` - Get company data
+- `useCompanyRefresh()` - Refresh company data  
+- `useCompanySearch(query)` - Search companies
+- `useAuth()` - Authentication state
+- `useUser()` - User profile data
+
+## Common Patterns & Anti-Patterns
+
+### ✅ DO:
+- **Check existing hooks** in `/lib/hooks/` before creating new queries
+- **Check existing components** in `/components/` before creating new ones
+- **Use TypeScript types** from `/types/api.ts` consistently
+- **Follow shadcn/ui patterns** for component structure
+- **Use semantic design tokens** (`text-destructive`, `bg-muted`, etc.)
+- **Use existing scripts** like `/app/db/seed.py` instead of duplicating logic
+
+### ❌ DON'T:
+- **Duplicate query logic** when hooks already exist
+- **Create custom response types** when `ApiResponse<T>` exists
+- **Use direct API calls** in components (use hooks instead)
+- **Hardcode colors** (use design system tokens)
+- **Create new files** unnecessarily (prefer editing existing ones)
+- **Mix SQLAlchemy models with Pydantic schemas** in union types (causes Pydantic errors)
+- **Auto-redirect on 401 for auth endpoints** (login/register expect 401 responses)
+
+### Type Safety Patterns:
+```typescript
+// Safe access to unknown Record types
+const getProperty = (data: Record<string, unknown>, key: string): string | null => {
+  if (key in data && typeof data[key] === 'string') {
+    return data[key] as string;
+  }
+  return null;
+};
+
+// Usage
+const name = getProperty(companyResponse.data.regon, 'name');
+```
+
 ## Deployment Strategy
 
 Planned deployment approach:

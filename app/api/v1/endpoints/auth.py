@@ -10,6 +10,7 @@ from app.schemas.auth import (
     RegisterResponse,
     RegisterResponseData,
     UserResponse,
+    UserProfileResponse,
 )
 from app.deps import get_db, get_current_active_user
 from app.crud.users import authenticate_user, create_user, get_user_by_email
@@ -42,6 +43,7 @@ async def login(request: LoginRequest, db: Session = Depends(get_db)):
     user_response = UserResponse(
         id=user.id, # type: ignore
         email=user.email, # type: ignore
+        name=user.name, # type: ignore
         plan=user.plan, # type: ignore
         created_at=user.created_at, # type: ignore
         is_active=user.is_active # type: ignore
@@ -73,7 +75,7 @@ async def register(request: RegisterRequest, db: Session = Depends(get_db)):
 
     # Create new user
     try:
-        user = create_user(db, request.email, request.password, plan="free")
+        user = create_user(db, request.email, request.password, request.name, plan="free")
     except IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -86,6 +88,7 @@ async def register(request: RegisterRequest, db: Session = Depends(get_db)):
     user_response = UserResponse(
         id=user.id, # type: ignore
         email=user.email, # type: ignore
+        name=user.name, # type: ignore
         plan=user.plan, # type: ignore
         created_at=user.created_at, # type: ignore
         is_active=user.is_active # type: ignore
@@ -97,13 +100,19 @@ async def register(request: RegisterRequest, db: Session = Depends(get_db)):
     )
 
 
-@router.get("/me", response_model=UserResponse)
+@router.get("/me", response_model=UserProfileResponse)
 async def get_current_user_info(current_user=Depends(get_current_active_user)):
     """Get current user information."""
-    return UserResponse(
+    user_data = UserResponse(
         id=current_user.id,
         email=current_user.email,
+        name=current_user.name,
         plan=current_user.plan,
         created_at=current_user.created_at,
         is_active=current_user.is_active
+    )
+    
+    return UserProfileResponse(
+        data=user_data,
+        success=True
     )

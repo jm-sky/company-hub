@@ -1,7 +1,6 @@
 import axios, { HttpStatusCode, AxiosInstance } from 'axios';
 import {
   ApiResponse,
-  Company,
   User,
   ApiKey,
   Webhook,
@@ -10,6 +9,7 @@ import {
   SubscriptionInfo,
   CheckoutSession,
   SubscriptionTier,
+  CompanyResponse,
 } from '@/types/api';
 
 class ApiClient {
@@ -28,6 +28,9 @@ class ApiClient {
     // Request interceptor to add auth token
     this.client.interceptors.request.use(
       (config) => {
+        if (!this.authToken) {
+          this.loadAuthFromStorage();
+        }
         if (this.authToken) {
           config.headers.Authorization = `Bearer ${this.authToken}`;
         }
@@ -41,8 +44,14 @@ class ApiClient {
       (response) => response,
       (error) => {
         if (error.response?.status === HttpStatusCode.Unauthorized) {
-          this.clearAuth();
-          window.location.href = '/login';
+          // Don't redirect if this is a login/register request (expected 401)
+          const isAuthRequest = error.config?.url?.includes('/auth/login') ||
+                               error.config?.url?.includes('/auth/register');
+
+          if (!isAuthRequest) {
+            this.clearAuth();
+            window.location.href = '/login';
+          }
         }
         return Promise.reject(error);
       }
@@ -88,15 +97,15 @@ class ApiClient {
   }
 
   async changePassword(currentPassword: string, newPassword: string): Promise<ApiResponse> {
-    const response = await this.client.post('/api/v1/auth/change-password', { 
-      current_password: currentPassword, 
-      new_password: newPassword 
+    const response = await this.client.post('/api/v1/auth/change-password', {
+      current_password: currentPassword,
+      new_password: newPassword
     });
     return response.data;
   }
 
   // Company endpoints
-  async getCompany(nip: string, refresh: boolean = false): Promise<ApiResponse<Company>> {
+  async getCompany(nip: string, refresh: boolean = false): Promise<ApiResponse<CompanyResponse>> {
     const params = refresh ? { refresh: 'true' } : {};
     const response = await this.client.get(`/api/v1/companies/${nip}`, { params });
     return response.data;
@@ -111,7 +120,7 @@ class ApiClient {
 
   // User endpoints
   async getProfile(): Promise<ApiResponse<User>> {
-    const response = await this.client.get('/api/v1/user/profile');
+    const response = await this.client.get('/api/v1/auth/me');
     return response.data;
   }
 

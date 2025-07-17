@@ -16,6 +16,7 @@ import { loginSchema, LoginFormData } from '@/lib/schemas/auth';
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   const router = useRouter();
   const { login } = useAuth();
 
@@ -34,9 +35,11 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       await login.mutateAsync(data);
+      setIsRedirecting(true);
       router.push('/dashboard');
     } catch (error) {
       console.error('Login failed:', error);
+      setIsRedirecting(false);
     }
   };
 
@@ -103,12 +106,17 @@ export default function LoginPage() {
             <Button
               type="submit"
               className="w-full"
-              disabled={login.isPending}
+              disabled={login.isPending || isRedirecting}
             >
               {login.isPending ? (
                 <>
                   <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
                   Signing in...
+                </>
+              ) : isRedirecting ? (
+                <>
+                  <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  Redirecting to dashboard...
                 </>
               ) : (
                 <>

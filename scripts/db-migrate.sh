@@ -22,38 +22,7 @@ echo "✅ Database migrations completed successfully!"
 read -p "Would you like to seed the database with test data? (y/N): " -r
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "🌱 Seeding database with test data..."
-    docker-compose exec app python -c "
-from app.db.database import SessionLocal
-from app.db.models import User, Company
-from app.utils.validators import normalize_nip
-from datetime import datetime
-
-db = SessionLocal()
-
-# Create test user
-test_user = User(
-    email='test@example.com',
-    password_hash='hashed_password',
-    plan='premium',
-    is_active=True
-)
-db.add(test_user)
-
-# Create test companies
-test_companies = [
-    Company(nip='1234567890', name='Test Company 1'),
-    Company(nip='0987654321', name='Test Company 2'),
-    Company(nip='5555555555', name='Test Company 3')
-]
-
-for company in test_companies:
-    db.add(company)
-
-db.commit()
-db.close()
-
-print('✅ Test data seeded successfully!')
-"
+    docker-compose exec app python app/db/seed.py
 fi
 
 echo ""

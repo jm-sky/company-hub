@@ -26,7 +26,7 @@ interface DashboardLayoutProps {
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: Home, disabled: false },
-  { name: 'Company Search', href: '/dashboard/search', icon: Search, disabled: true },
+  { name: 'Company Search', href: '/dashboard/search', icon: Search, disabled: false },
   { name: 'Companies', href: '/dashboard/companies', icon: Building2, disabled: true },
   { name: 'Subscription', href: '/dashboard/subscription', icon: CreditCard, disabled: true },
   { name: 'Webhooks', href: '/dashboard/webhooks', icon: Webhook, disabled: true },
@@ -82,7 +82,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 <User className="size-8 text-muted-foreground" />
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-foreground">{user?.email}</p>
+                <p className="text-sm font-medium text-foreground">{user?.name || user?.email}</p>
                 <p className="text-xs text-muted-foreground">{user?.subscription_tier}</p>
               </div>
             </div>

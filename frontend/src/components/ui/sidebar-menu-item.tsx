@@ -2,6 +2,7 @@
 
 import { LucideIcon } from 'lucide-react'
 import { Hourglass } from 'lucide-react'
+import Link from 'next/link'
 
 interface SidebarMenuItemProps {
   name: string
@@ -23,7 +24,7 @@ export function SidebarMenuItem({ name, href, icon: Icon, disabled = false, isAc
   }
 
   return (
-    <a
+    <Link
       href={disabled ? '#' : href}
       className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${getClassName()}`}
       onClick={disabled ? (e) => e.preventDefault() : undefined}
@@ -33,6 +34,6 @@ export function SidebarMenuItem({ name, href, icon: Icon, disabled = false, isAc
       {disabled && (
         <Hourglass className="ml-auto size-3 text-muted-foreground" />
       )}
-    </a>
+    </Link>
   )
 }

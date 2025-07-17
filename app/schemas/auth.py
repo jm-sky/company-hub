@@ -10,6 +10,7 @@ class LoginRequest(BaseModel):
 class UserResponse(BaseModel):
     id: int
     email: str
+    name: Optional[str] = None
     plan: str
     created_at: datetime
     is_active: bool
@@ -35,3 +36,6 @@ class RegisterResponseData(BaseModel):
 
 class RegisterResponse(ApiResponse):
     data: RegisterResponseData
+
+class UserProfileResponse(ApiResponse):
+    data: UserResponse

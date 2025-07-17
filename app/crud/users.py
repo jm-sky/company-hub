@@ -16,11 +16,12 @@ def get_user_by_id(db: Session, user_id: int) -> Optional[User]:
     return db.query(User).filter(User.id == user_id).first()
 
 
-def create_user(db: Session, email: str, password: str, plan: str = "free") -> User:
+def create_user(db: Session, email: str, password: str, name: Optional[str] = None, plan: str = "free") -> User:
     """Create a new user."""
     hashed_password = hash_password(password)
     user = User(
         email=email,
+        name=name,
         password_hash=hashed_password,
         plan=plan,
         is_active=True

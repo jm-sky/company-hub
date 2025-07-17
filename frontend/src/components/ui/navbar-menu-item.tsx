@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { Hourglass } from 'lucide-react'
 import { NavigationMenuItem, NavigationMenuLink } from '@/components/ui/navigation-menu'
 
@@ -24,15 +25,17 @@ export function NavbarMenuItem({ href, label, disabled = false, isActive = false
 
   return (
     <NavigationMenuItem className={className}>
-      <NavigationMenuLink
-        href={disabled ? '#' : href}
-        className={`py-1.5 flex-row items-center flex-nowrap font-medium ${getClassName()}`}
-        onClick={disabled ? (e) => e.preventDefault() : undefined}
-      >
-        {label}
-        {disabled && (
-          <Hourglass className="ml-2 size-3 text-muted-foreground" />
-        )}
+      <NavigationMenuLink asChild>
+        <Link
+          href={disabled ? '#' : href}
+          className={`py-1.5 flex-row items-center flex-nowrap font-medium ${getClassName()}`}
+          onClick={disabled ? (e) => e.preventDefault() : undefined}
+        >
+          {label}
+          {disabled && (
+            <Hourglass className="ml-2 size-3 text-muted-foreground" />
+          )}
+        </Link>
       </NavigationMenuLink>
     </NavigationMenuItem>
   )
@@ -51,15 +54,17 @@ export function MobileNavbarMenuItem({ href, label, disabled = false, isActive =
 
   return (
     <NavigationMenuItem className="w-full">
-      <NavigationMenuLink 
-        href={disabled ? '#' : href} 
-        className={`py-1.5 flex-nowrap ${getClassName()}`}
-        onClick={disabled ? (e) => e.preventDefault() : undefined}
-      >
-        {label}
-        {disabled && (
-          <Hourglass className="ml-2 size-3 text-muted-foreground" />
-        )}
+      <NavigationMenuLink asChild>
+        <Link
+          href={disabled ? '#' : href}
+          className={`py-1.5 flex-nowrap ${getClassName()}`}
+          onClick={disabled ? (e) => e.preventDefault() : undefined}
+        >
+          {label}
+          {disabled && (
+            <Hourglass className="ml-2 size-3 text-muted-foreground" />
+          )}
+        </Link>
       </NavigationMenuLink>
     </NavigationMenuItem>
   )

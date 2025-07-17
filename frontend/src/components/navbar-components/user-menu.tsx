@@ -47,7 +47,7 @@ export default function UserMenu() {
           <Avatar>
             <AvatarImage src="" alt="Profile image" />
             <AvatarFallback>
-              {user?.email ? getInitials(user.email) : <User className="size-4" />}
+              {user?.name ? getInitials(user.name) : user?.email ? getInitials(user.email) : <User className="size-4" />}
             </AvatarFallback>
           </Avatar>
         </Button>

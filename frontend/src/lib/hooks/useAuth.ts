@@ -59,5 +59,10 @@ export const useUser = () => {
       return response.data;
     },
     enabled: typeof window !== 'undefined' && !!localStorage.getItem('auth_token'),
+    staleTime: 15 * 60 * 1000, // 15 minutes - consider data fresh for 15 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes - keep in cache for 30 minutes
+    refetchOnWindowFocus: false, // Don't refetch when window gains focus
+    refetchOnMount: false, // Don't refetch on component mount if data exists and is fresh
+    refetchOnReconnect: false, // Don't refetch when network reconnects
   });
 };

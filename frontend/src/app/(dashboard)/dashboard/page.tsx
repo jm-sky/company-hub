@@ -62,7 +62,7 @@ export default function DashboardPage() {
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
         <p className="text-gray-600">
-          Welcome back, {user?.email}. Here&apos;s what&apos;s happening with your account.
+          Welcome back, {user?.name ?? user?.email}. Here&apos;s what&apos;s happening with your account.
         </p>
       </div>
 
@@ -77,8 +77,8 @@ export default function DashboardPage() {
             <CardContent>
               <div className="text-2xl font-bold">{stat.value}</div>
               <p className={`text-xs ${
-                stat.changeType === 'positive' 
-                  ? 'text-green-600' 
+                stat.changeType === 'positive'
+                  ? 'text-green-600'
                   : stat.changeType === 'warning'
                   ? 'text-yellow-600'
                   : 'text-red-600'

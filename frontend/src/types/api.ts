@@ -2,6 +2,7 @@
 export type CompanyStatus = 'active' | 'inactive';
 export type VatStatus = 'active' | 'inactive' | 'exempt';
 export type SubscriptionTier = 'free' | 'pro' | 'enterprise';
+export type ProviderStatus = 'fresh' | 'cached' | 'rate_limited' | 'error' | 'unknown';
 
 export interface ApiResponse<T = unknown> {
   data: T;
@@ -34,7 +35,7 @@ export interface Company {
 export interface User {
   id: string;
   email: string;
-  name: string;
+  name?: string;
   subscription_tier: SubscriptionTier;
   api_calls_used: number;
   api_calls_limit: number;
@@ -90,4 +91,34 @@ export interface SubscriptionInfo {
 
 export interface CheckoutSession {
   checkout_url: string;
+}
+
+// Provider metadata for company data
+export interface ProviderMetadata {
+  status: ProviderStatus;
+  cached_at?: string;
+  fetched_at?: string;
+  next_available_at?: string;
+  error_message?: string;
+}
+
+// Updated Company interface to match backend response structure
+export interface CompanyData {
+  nip: string;
+  regon?: Record<string, unknown>;
+  mf?: Record<string, unknown>;
+  vies?: Record<string, unknown>;
+  bank_accounts?: Record<string, unknown>[];
+}
+
+export interface CompanyMetadata {
+  regon?: ProviderMetadata;
+  mf?: ProviderMetadata;
+  vies?: ProviderMetadata;
+}
+
+// Company response uses the standard ApiResponse pattern
+export interface CompanyResponse {
+  data: CompanyData;
+  metadata: CompanyMetadata;
 }

@@ -10,10 +10,10 @@ from sqlalchemy.exc import IntegrityError
 # Add the app directory to the path so we can import our modules
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
-from app.db.database import SessionLocal
-from app.db.models import User, Company, ApiToken
-from app.utils.security import hash_password
-from app.config import settings
+from app.db.database import SessionLocal  # noqa: E402
+from app.db.models import User, Company, ApiToken  # noqa: E402
+from app.utils.security import hash_password  # noqa: E402
+from app.config import settings  # noqa: E402
 
 
 def seed_admin_user(db: Session) -> None:
@@ -28,6 +28,7 @@ def seed_admin_user(db: Session) -> None:
     # Create admin user
     admin_user = User(
         email=settings.admin_email,
+        name=settings.admin_name,
         password_hash=hash_password(settings.admin_password),
         plan="enterprise",
         is_active=True,
@@ -40,6 +41,7 @@ def seed_admin_user(db: Session) -> None:
         db.commit()
         db.refresh(admin_user)
         print("✅ Admin user created successfully!")
+        print(f"   Name: {settings.admin_name}")
         print(f"   Email: {settings.admin_email}")
         print(f"   Password: {settings.admin_password}")
         print("   Plan: enterprise")
@@ -118,6 +120,7 @@ def seed_test_user(db: Session) -> None:
     # Create test user
     test_user = User(
         email="test@companyhub.com",
+        name="Test User",
         password_hash=hash_password("test123"),
         plan="free",
         is_active=True,
