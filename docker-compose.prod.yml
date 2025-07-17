@@ -2,7 +2,7 @@ services:
   app:
     build: 
       context: .
-      dockerfile: Dockerfile.prod
+      dockerfile: docker/Dockerfile.prod
     ports:
       - "${DOCKER_APP_PORT:-8000}:8000"
     environment:
