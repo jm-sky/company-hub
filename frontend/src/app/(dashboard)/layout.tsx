@@ -46,7 +46,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-muted/50">
+    <div className="min-h-screen bg-background/50">
       {/* Mobile sidebar */}
       <div className={cn(
         "fixed inset-0 z-50 lg:hidden",
@@ -136,7 +136,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Top navbar */}
-        <div className="sticky top-0 z-10 bg-white">
+        <div className="sticky top-0 z-10 bg-background">
           <DashboardNavbar onMobileMenuClick={() => setSidebarOpen(true)} />
         </div>
 

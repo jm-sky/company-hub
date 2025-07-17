@@ -2,12 +2,13 @@ from fastapi import APIRouter, HTTPException, Query, Depends
 from typing import Optional, List
 from sqlalchemy.orm import Session
 from app.schemas.company import (
-    SuccessResponse,
     ErrorResponse,
     CompanyDataResponse,
     CompanyMetadataResponse,
+    CompanyResponse,
     ProviderMetadata,
 )
+from app.schemas.base import ApiResponse
 from app.providers.regon import RegonProvider
 from app.providers.base import RateLimitError, ValidationError, ProviderError
 from app.utils.validators import normalize_nip
@@ -23,7 +24,7 @@ from app.crud.companies import (
 router = APIRouter()
 
 
-@router.get("/{nip}", response_model=SuccessResponse)
+@router.get("/{nip}", response_model=ApiResponse)
 async def get_company_data(
     nip: str,
     refresh: Optional[str] = Query(
@@ -129,8 +130,9 @@ async def get_company_data(
         )
         raise HTTPException(status_code=429, detail=error_response.model_dump())
 
-    # Return success response
-    return SuccessResponse(data=response_data, metadata=response_metadata)
+    # Return success response wrapped in ApiResponse
+    company_response = CompanyResponse(data=response_data, metadata=response_metadata)
+    return ApiResponse(data=company_response, success=True)
 
 
 @router.get("/", response_model=List[str])

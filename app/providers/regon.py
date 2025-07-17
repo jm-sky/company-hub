@@ -126,11 +126,14 @@ class RegonProvider(BaseProvider):
             return self.session_id
 
         await self._create_session()
-        return self.session_id
+        return self.session_id or ""
 
 
     async def _create_session(self):
         """Create a new session with REGON API."""
+        if not self.api_key or self.api_key == "your-regon-api-key":
+            raise ProviderError("REGON API key not configured", self.name)
+
         soap_body = f"""<?xml version="1.0" encoding="utf-8"?>
         <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://CIS/BIR/PUBL/2014/07">
             <soap:Header/>
@@ -151,7 +154,7 @@ class RegonProvider(BaseProvider):
 
             if response.status_code != 200:
                 raise ProviderError(
-                    f"Failed to create session: {response.status_code}", self.name
+                    f"Failed to create session: {response.status_code}. Response: {response.text[:200]}", self.name
                 )
 
             # Parse session ID from response (simplified)

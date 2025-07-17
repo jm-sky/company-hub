@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Hourglass } from 'lucide-react'
 import { NavigationMenuItem, NavigationMenuLink } from '@/components/ui/navigation-menu'
+import { cn } from '@/lib/utils'
 
 interface NavbarMenuItemProps {
   href: string
@@ -18,9 +19,9 @@ export function NavbarMenuItem({ href, label, disabled = false, isActive = false
       return 'text-muted-foreground cursor-not-allowed opacity-50'
     }
     if (isActive) {
-      return 'text-primary font-medium'
+      return 'text-primary font-medium before:w-full'
     }
-    return 'text-muted-foreground hover:text-primary'
+    return 'text-muted-foreground hover:text-primary hover:before:w-full'
   }
 
   return (
@@ -28,7 +29,7 @@ export function NavbarMenuItem({ href, label, disabled = false, isActive = false
       <NavigationMenuLink asChild>
         <Link
           href={disabled ? '#' : href}
-          className={`py-1.5 flex-row items-center flex-nowrap font-medium ${getClassName()}`}
+          className={cn(`py-1.5 flex-row items-center flex-nowrap font-medium hover:bg-transparent before:content-[""] before:h-[2px] before:w-0 before:absolute before:bottom-0 before:left-0 before:bg-brand before:transition-all before:duration-300 before:ease-in-out`, getClassName())}
           onClick={disabled ? (e) => e.preventDefault() : undefined}
         >
           {label}

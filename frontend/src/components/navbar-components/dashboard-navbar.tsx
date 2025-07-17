@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 
-import SettingsMenu from "@/components/navbar-components/settings-menu"
+// import SettingsMenu from "@/components/navbar-components/settings-menu"
 import UserMenu from "@/components/navbar-components/user-menu"
 import {
   NavigationMenu,
@@ -12,6 +12,7 @@ import { NavbarMenuItem } from "@/components/ui/navbar-menu-item"
 import type { NavigationLink } from "./nav.type"
 import MobileMenuTrigger from "./mobile-menu-trigger"
 import TierProjectBreadcrumb from "./tier-project-breadcrumb"
+import { ThemeToggle } from '../ui/theme-toggle'
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks: NavigationLink[] = [
@@ -56,7 +57,8 @@ export default function DashboardNavbar({ onMobileMenuClick }: DashboardNavbarPr
               </NavigationMenuList>
             </NavigationMenu>
             {/* Settings */}
-            <SettingsMenu />
+            {/* <SettingsMenu /> */}
+            <ThemeToggle />
           </div>
           {/* User menu */}
           <UserMenu />

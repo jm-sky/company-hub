@@ -1,16 +1,7 @@
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 from datetime import datetime
-
-
-class CompanyResponse(BaseModel):
-    """Response schema for company data."""
-
-    data: Dict[str, Any]
-    metadata: Dict[str, Any]
-
-    class Config:
-        json_encoders = {datetime: lambda v: v.isoformat()}
+from .base import ApiResponse
 
 
 class ProviderMetadata(BaseModel):
@@ -55,3 +46,19 @@ class SuccessResponse(BaseModel):
 
     data: CompanyDataResponse
     metadata: CompanyMetadataResponse
+
+
+class CompanyResponse(BaseModel):
+    """Response schema for company data."""
+
+    data: CompanyDataResponse
+    metadata: CompanyMetadataResponse
+
+    class Config:
+        json_encoders = {datetime: lambda v: v.isoformat()}
+
+
+class CompanyApiResponse(ApiResponse):
+    """API response wrapper for company data."""
+
+    data: CompanyResponse
