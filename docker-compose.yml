@@ -53,10 +53,13 @@ services:
     networks:
       - companyhub-network
 
-  adminer:
-    image: adminer:latest
+  pgadmin:
+    image: dpage/pgadmin4:latest
     ports:
-      - "${ADMINER_PORT:-8080}:8080"
+      - "${PGADMIN_PORT:-8080}:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-admin@companyhub.com}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-admin123}
     depends_on:
       - db
     networks:
