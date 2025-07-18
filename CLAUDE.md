@@ -145,6 +145,7 @@ const { data } = useQuery({
 - **Follow shadcn/ui patterns** for component structure
 - **Use semantic design tokens** (`text-destructive`, `bg-muted`, etc.)
 - **Use existing scripts** like `/app/db/seed.py` instead of duplicating logic
+- **Add empty line at EOF** for all files
 
 ### ❌ DON'T:
 - **Duplicate query logic** when hooks already exist
