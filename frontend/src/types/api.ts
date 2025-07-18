@@ -145,11 +145,62 @@ export interface RegonCompanyData {
   detailed_error?: string;
 }
 
+// MF (Biała Lista) API response structures
+export interface MfBankAccount {
+  account_number: string;
+  validated: boolean;
+  date: string;
+}
+
+export interface MfAddress {
+  street: string;
+  building_number: string;
+  apartment_number: string;
+  city: string;
+  postal_code: string;
+  country: string;
+}
+
+export interface MfPerson {
+  company_name: string;
+  first_name: string;
+  last_name: string;
+  nip: string;
+  pesel: string;
+}
+
+export interface MfCompanyData {
+  found: boolean;
+  nip: string;
+  date: string;
+  name?: string;
+  regon?: string;
+  krs?: string;
+  status_vat?: string;
+  registration_legal_date?: string;
+  registration_denial_basis?: string;
+  registration_denial_date?: string;
+  restoration_basis?: string;
+  restoration_date?: string;
+  removal_basis?: string;
+  removal_date?: string;
+  address?: MfAddress;
+  residence_address?: MfAddress;
+  bank_accounts?: MfBankAccount[];
+  representatives?: MfPerson[];
+  authorized_persons?: MfPerson[];
+  partners?: MfPerson[];
+  has_virtual_accounts?: boolean;
+  request_id?: string;
+  fetched_at: string;
+  message?: string;
+}
+
 // Updated Company interface to match backend response structure
 export interface CompanyData {
   nip: string;
   regon?: RegonCompanyData;
-  mf?: Record<string, unknown>;
+  mf?: MfCompanyData;
   vies?: Record<string, unknown>;
   bank_accounts?: Record<string, unknown>[];
 }

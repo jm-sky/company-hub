@@ -26,7 +26,7 @@ def get_or_create_company(db: Session, nip: str, name: Optional[str] = None) -> 
     company = get_company_by_nip(db, nip)
     if not company:
         company = create_company(db, nip, name)
-    elif name and not name != company.name:
+    elif name and name != company.name:
         company.name = name  # type: ignore
         db.commit()
         db.refresh(company)

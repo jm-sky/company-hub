@@ -2,8 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
-import { AlertCircle, Building, MapPin, Phone, Calendar, FileText, Globe } from 'lucide-react'
-import { CompanyResponse, RegonCompanyData } from '@/types/api'
+import { AlertCircle, Building, MapPin, Phone, Calendar, FileText, Globe, CreditCard, Users, ShieldCheck } from 'lucide-react'
+import { CompanyResponse, RegonCompanyData, MfCompanyData } from '@/types/api'
 import {
   parseRegonDetailedData,
   formatRegonAddress,
@@ -11,6 +11,13 @@ import {
   formatRegonDate,
   getEntityTypeLabel,
 } from '@/lib/utils/regon'
+import {
+  formatMfDate,
+  formatMfVatStatus,
+  formatMfAddress,
+  formatMfBankAccount,
+  getMfStatusBadgeVariant,
+} from '@/lib/utils/mf'
 
 interface CompanyDataDisplayProps {
   companyResponse: CompanyResponse
@@ -242,6 +249,255 @@ function RegonDataCard({ regonData }: RegonDataCardProps) {
   )
 }
 
+interface MfDataCardProps {
+  mfData: MfCompanyData
+}
+
+function MfDataCard({ mfData }: MfDataCardProps) {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <ShieldCheck className="size-5" />
+          Dane MF (Biała Lista)
+        </CardTitle>
+        <CardDescription>
+          Informacje o podatniku VAT z białej listy Ministerstwa Finansów
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-6">
+          {/* Basic Information */}
+          <div className="space-y-3">
+            <h4 className="font-semibold text-lg">Informacje podstawowe</h4>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">Nazwa firmy</Label>
+                <p className="text-sm font-medium">{mfData.name || 'N/A'}</p>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">NIP</Label>
+                <p className="text-sm font-mono">{mfData.nip}</p>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">REGON</Label>
+                <p className="text-sm font-mono">{mfData.regon || 'N/A'}</p>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">KRS</Label>
+                <p className="text-sm font-mono">{mfData.krs || 'N/A'}</p>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">Status VAT</Label>
+                <Badge variant={getMfStatusBadgeVariant(mfData.status_vat || '')}>
+                  {formatMfVatStatus(mfData.status_vat || '')}
+                </Badge>
+              </div>
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">Data sprawdzenia</Label>
+                <p className="text-sm">{formatMfDate(mfData.date)}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* VAT Registration Details */}
+          {(mfData.registration_legal_date || mfData.registration_denial_date || mfData.restoration_date || mfData.removal_date) && (
+            <div className="space-y-3">
+              <h4 className="font-semibold text-lg flex items-center gap-2">
+                <Calendar className="size-4" />
+                Historia rejestracji VAT
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {mfData.registration_legal_date && (
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground">Data rejestracji</Label>
+                    <p className="text-sm">{formatMfDate(mfData.registration_legal_date)}</p>
+                  </div>
+                )}
+                {mfData.registration_denial_date && (
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground">Data odmowy rejestracji</Label>
+                    <p className="text-sm">{formatMfDate(mfData.registration_denial_date)}</p>
+                  </div>
+                )}
+                {mfData.restoration_date && (
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground">Data przywrócenia</Label>
+                    <p className="text-sm">{formatMfDate(mfData.restoration_date)}</p>
+                  </div>
+                )}
+                {mfData.removal_date && (
+                  <div>
+                    <Label className="text-sm font-medium text-muted-foreground">Data wykreślenia</Label>
+                    <p className="text-sm">{formatMfDate(mfData.removal_date)}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Address Information */}
+          {mfData.address && (
+            <div className="space-y-3">
+              <h4 className="font-semibold text-lg flex items-center gap-2">
+                <MapPin className="size-4" />
+                Adres działalności
+              </h4>
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">Pełny adres</Label>
+                  <p className="text-sm">{formatMfAddress(mfData.address)}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Residence Address */}
+          {mfData.residence_address && (
+            <div className="space-y-3">
+              <h4 className="font-semibold text-lg flex items-center gap-2">
+                <MapPin className="size-4" />
+                Adres zamieszkania
+              </h4>
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">Pełny adres</Label>
+                  <p className="text-sm">{formatMfAddress(mfData.residence_address)}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Bank Accounts */}
+          {mfData.bank_accounts && mfData.bank_accounts.length > 0 && (
+            <div className="space-y-3">
+              <h4 className="font-semibold text-lg flex items-center gap-2">
+                <CreditCard className="size-4" />
+                Rachunki bankowe
+              </h4>
+              <div className="space-y-2">
+                {mfData.bank_accounts.map((account, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+                    <div>
+                      <p className="text-sm font-mono">{formatMfBankAccount(account.account_number)}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Zweryfikowany: {formatMfDate(account.date)}
+                      </p>
+                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      {account.validated ? 'Zweryfikowany' : 'Niezweryfikowany'}
+                    </Badge>
+                  </div>
+                ))}
+                {mfData.has_virtual_accounts && (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <AlertCircle className="size-4" />
+                    Posiada rachunki wirtualne
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Representatives */}
+          {mfData.representatives && mfData.representatives.length > 0 && (
+            <div className="space-y-3">
+              <h4 className="font-semibold text-lg flex items-center gap-2">
+                <Users className="size-4" />
+                Reprezentanci
+              </h4>
+              <div className="space-y-2">
+                {mfData.representatives.map((rep, index) => (
+                  <div key={index} className="p-3 bg-muted rounded-lg">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      <div>
+                        <Label className="text-xs font-medium text-muted-foreground">Nazwa/Imię i nazwisko</Label>
+                        <p className="text-sm">
+                          {rep.company_name || `${rep.first_name} ${rep.last_name}`.trim()}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-xs font-medium text-muted-foreground">NIP</Label>
+                        <p className="text-sm font-mono">{rep.nip || 'N/A'}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Authorized Persons */}
+          {mfData.authorized_persons && mfData.authorized_persons.length > 0 && (
+            <div className="space-y-3">
+              <h4 className="font-semibold text-lg flex items-center gap-2">
+                <Users className="size-4" />
+                Osoby upoważnione
+              </h4>
+              <div className="space-y-2">
+                {mfData.authorized_persons.map((person, index) => (
+                  <div key={index} className="p-3 bg-muted rounded-lg">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      <div>
+                        <Label className="text-xs font-medium text-muted-foreground">Nazwa/Imię i nazwisko</Label>
+                        <p className="text-sm">
+                          {person.company_name || `${person.first_name} ${person.last_name}`.trim()}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-xs font-medium text-muted-foreground">NIP</Label>
+                        <p className="text-sm font-mono">{person.nip || 'N/A'}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Partners */}
+          {mfData.partners && mfData.partners.length > 0 && (
+            <div className="space-y-3">
+              <h4 className="font-semibold text-lg flex items-center gap-2">
+                <Users className="size-4" />
+                Wspólnicy
+              </h4>
+              <div className="space-y-2">
+                {mfData.partners.map((partner, index) => (
+                  <div key={index} className="p-3 bg-muted rounded-lg">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      <div>
+                        <Label className="text-xs font-medium text-muted-foreground">Nazwa/Imię i nazwisko</Label>
+                        <p className="text-sm">
+                          {partner.company_name || `${partner.first_name} ${partner.last_name}`.trim()}
+                        </p>
+                      </div>
+                      <div>
+                        <Label className="text-xs font-medium text-muted-foreground">NIP</Label>
+                        <p className="text-sm font-mono">{partner.nip || 'N/A'}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Fetch Information */}
+          <div className="pt-4 border-t">
+            <div className="flex items-center justify-between text-sm text-muted-foreground">
+              <span>Pobrano: {formatMfDate(mfData.fetched_at)}</span>
+              <Badge variant="outline" className="text-xs">
+                {mfData.request_id ? `ID: ${mfData.request_id}` : 'Biała Lista MF'}
+              </Badge>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
+
 interface DataCardProps {
   title: string
   description: string
@@ -276,7 +532,7 @@ function NoDataAlert() {
 }
 
 function hasCompanyData(companyResponse: CompanyResponse): boolean {
-  return !!(companyResponse.data.regon?.found || companyResponse.data.mf || companyResponse.data.vies);
+  return !!(companyResponse.data.regon?.found || companyResponse.data.mf?.found || companyResponse.data.vies);
 }
 
 export function CompanyDataDisplay({ companyResponse }: CompanyDataDisplayProps) {
@@ -298,12 +554,18 @@ export function CompanyDataDisplay({ companyResponse }: CompanyDataDisplayProps)
       )}
 
       {/* MF Data */}
-      {companyResponse.data.mf && (
-        <DataCard
-          title="Dane MF (Biała Lista)"
-          description="Informacje o podatniku VAT z białej listy"
-          data={companyResponse.data.mf}
-        />
+      {companyResponse.data.mf?.found && (
+        <MfDataCard mfData={companyResponse.data.mf} />
+      )}
+
+      {/* MF Error */}
+      {companyResponse.data.mf && !companyResponse.data.mf.found && (
+        <Alert>
+          <AlertCircle className="size-4" />
+          <AlertDescription>
+            {companyResponse.data.mf.message || 'Nie znaleziono danych w białej liście MF'}
+          </AlertDescription>
+        </Alert>
       )}
 
       {/* VIES Data */}

@@ -12,7 +12,7 @@ from app.providers.base import (
     ValidationError,
 )
 from app.utils.validators import validate_nip
-from app.config import settings, REGON_API_KEY_PLACEHOLDER
+from app.config import settings
 
 logger = logging.getLogger(__name__)
 
@@ -140,7 +140,7 @@ class RegonProvider(BaseProvider):
         """Create a new session with REGON API."""
         logger.info(f"Creating REGON session with API URL: {self.api_url}")
 
-        if not self.api_key or self.api_key == REGON_API_KEY_PLACEHOLDER:
+        if not self.api_key:
             logger.error("REGON API key not configured")
             raise ProviderError("REGON API key not configured", self.name)
 

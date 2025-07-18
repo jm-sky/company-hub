@@ -1,6 +1,5 @@
 from pydantic_settings import BaseSettings
-
-REGON_API_KEY_PLACEHOLDER = "your-regon-api-key"
+import secrets
 
 class Settings(BaseSettings):
     # Database
@@ -10,13 +9,13 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6379"
 
     # Security
-    secret_key: str = "your-secret-key-change-this"
+    secret_key: str = secrets.token_urlsafe(32)
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 
     # REGON API
     regon_api_url: str = "https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc"
-    regon_api_key: str = REGON_API_KEY_PLACEHOLDER
+    regon_api_key: str = ""
 
     # MF API
     mf_api_url: str = "https://wl-api.mf.gov.pl"
@@ -44,8 +43,8 @@ class Settings(BaseSettings):
 
     # Admin user settings
     admin_name: str = "Admin"
-    admin_email: str = "admin@companyhub.com"
-    admin_password: str = "admin123"
+    admin_email: str = "admin@companyhub.local"
+    admin_password: str = ""
 
     class Config:
         env_file = ".env"

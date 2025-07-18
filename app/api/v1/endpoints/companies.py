@@ -10,15 +10,19 @@ from app.schemas.company import (
 )
 from app.schemas.base import ApiResponse
 from app.providers.regon import RegonProvider
+from app.providers.mf import MfProvider
 from app.providers.base import RateLimitError, ValidationError, ProviderError
 from app.utils.validators import normalize_nip
 from app.db.database import get_db
-from app.db.models import Company, RegonData
+from app.db.models import Company, RegonData, MfData
 from app.crud.companies import (
     get_or_create_company,
     get_regon_data,
     is_regon_data_expired,
     store_regon_data,
+    get_mf_data,
+    is_mf_data_expired,
+    store_mf_data,
 )
 
 router = APIRouter()
@@ -117,7 +121,53 @@ async def get_company_data(
                 status="error", error_message=e.message
             )
 
-    # TODO: Add MF and VIES providers similarly
+    # Handle MF (Biała Lista) data
+    should_fetch_mf = "mf" in refresh_providers if refresh else False
+    cached_mf_data: MfData | None = get_mf_data(db, company.id)  # type: ignore
+
+    if not should_fetch_mf and cached_mf_data and not is_mf_data_expired(cached_mf_data):
+        # Use cached data
+        response_data.mf = cached_mf_data.data  # type: ignore
+        response_metadata.mf = ProviderMetadata(
+            status="cached", fetched_at=cached_mf_data.fetched_at.isoformat()
+        )
+    else:
+        # Fetch fresh data
+        mf_provider = MfProvider()
+        try:
+            mf_data = await mf_provider.fetch_data(normalized_nip)
+            response_data.mf = mf_data
+            response_metadata.mf = ProviderMetadata(
+                status="fresh", fetched_at=mf_data.get("fetched_at")
+            )
+
+            # Store in database
+            store_mf_data(db, company.id, mf_data)  # type: ignore
+
+            # Update company name if available and not already set
+            if "name" in mf_data and mf_data["name"] and not company.name:
+                company.name = mf_data["name"]  # type: ignore
+                db.commit()
+
+        except RateLimitError as e:
+            any_rate_limited = True
+            response_metadata.mf = ProviderMetadata(
+                status="rate_limited", next_available_at=e.retry_after
+            )
+            # Use cached data if available
+            if cached_mf_data:
+                response_data.mf = cached_mf_data.data  # type: ignore
+                response_metadata.mf.status = "cached_due_to_rate_limit"  # type: ignore
+        except ValidationError as e:
+            response_metadata.mf = ProviderMetadata(
+                status="error", error_message=e.message
+            )
+        except ProviderError as e:
+            response_metadata.mf = ProviderMetadata(
+                status="error", error_message=e.message
+            )
+
+    # TODO: Add VIES provider similarly
 
     # Determine response status
     if any_rate_limited and partial != "allow":
