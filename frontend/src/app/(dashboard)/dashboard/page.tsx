@@ -3,7 +3,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { useUser } from '@/lib/hooks/useAuth'
-import { Building2, Search, CreditCard, Activity, TrendingUp } from 'lucide-react'
+import { Building2, Search, CreditCard, Activity, TrendingUp, InfoIcon } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 
 export default function DashboardPage() {
   const { data: user } = useUser()
@@ -46,6 +47,7 @@ export default function DashboardPage() {
       icon: Building2,
       href: '/dashboard/companies',
       color: 'bg-green-500',
+      disabled: true,
     },
     {
       title: 'Upgrade Plan',
@@ -53,6 +55,7 @@ export default function DashboardPage() {
       icon: CreditCard,
       href: '/dashboard/subscription',
       color: 'bg-purple-500',
+      disabled: true,
     },
   ]
 
@@ -85,6 +88,9 @@ export default function DashboardPage() {
               }`}>
                 {stat.change} from last month
               </p>
+              <p className="text-xs text-muted-foreground">
+                This is a mock data.
+              </p>
             </CardContent>
           </Card>
         ))}
@@ -95,7 +101,7 @@ export default function DashboardPage() {
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {quickActions.map((action) => (
-            <Card key={action.title} className="cursor-pointer hover:shadow-md transition-shadow">
+            <Card key={action.title} className={`cursor-pointer hover:shadow-md transition-shadow ${action.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
               <CardHeader>
                 <div className="flex items-center space-x-3">
                   <div className={`p-2 rounded-lg ${action.color}`}>
@@ -120,7 +126,13 @@ export default function DashboardPage() {
       {/* Recent Activity */}
       <Card>
         <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            Recent Activity
+            <Badge variant="warning" className="flex items-center gap-2 text-xs">
+              <InfoIcon className="size-4" />
+              Mocked data
+            </Badge>
+          </CardTitle>
           <CardDescription>Your latest company searches and API calls</CardDescription>
         </CardHeader>
         <CardContent>
