@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { registerSchema, RegisterFormData } from '@/lib/schemas/auth';
+import { LogoText } from '@/components/ui/logo-text';
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -48,7 +49,7 @@ export default function RegisterPage() {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Create your account</CardTitle>
           <CardDescription>
-            Get started with CompanyHub and access Polish company data
+            Get started with <LogoText size="sm" className="inline" /> and access Polish company data
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -165,7 +166,7 @@ export default function RegisterPage() {
 
           <div className="mt-6 text-center text-sm">
             <span className="text-muted-foreground">Already have an account? </span>
-            <Link href="/login" className="text-blue-600 hover:text-blue-500 font-medium">
+            <Link href="/login" className="text-brand hover:text-brand/80 font-medium">
               Sign in
             </Link>
           </div>

@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { loginSchema, LoginFormData } from '@/lib/schemas/auth';
+import { LogoText } from '@/components/ui/logo-text';
 
 export function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
@@ -56,7 +57,7 @@ export function LoginContent() {
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Sign in to CompanyHub</CardTitle>
+          <CardTitle className="text-2xl font-bold">Sign in to <LogoText size="lg" /></CardTitle>
           <CardDescription>
             Enter your email and password to access your account
           </CardDescription>
