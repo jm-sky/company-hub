@@ -102,10 +102,53 @@ export interface ProviderMetadata {
   error_message?: string;
 }
 
+// REGON API response structures
+export interface RegonSearchData {
+  Regon: string;
+  Nip: string;
+  StatusNip: string | null;
+  Nazwa: string;
+  Wojewodztwo: string;
+  Powiat: string;
+  Gmina: string;
+  Miejscowosc: string;
+  KodPocztowy: string;
+  Ulica: string;
+  NrNieruchomosci: string;
+  NrLokalu: string | null;
+  Typ: string;
+  SilosID: string;
+  DataZakonczeniaDzialalnosci: string | null;
+  MiejscowoscPoczty: string;
+}
+
+export interface RegonDetailedData {
+  raw_response: string;
+  report_type: string;
+  parsed_data?: Record<string, string>;
+}
+
+export interface RegonCompanyData {
+  found: boolean;
+  nip: string;
+  regon?: string;
+  name?: string;
+  entity_type?: string;
+  search_result?: {
+    found: boolean;
+    data: RegonSearchData;
+  };
+  detailed_data?: RegonDetailedData;
+  report_type?: string;
+  fetched_at: string;
+  message?: string;
+  detailed_error?: string;
+}
+
 // Updated Company interface to match backend response structure
 export interface CompanyData {
   nip: string;
-  regon?: Record<string, unknown>;
+  regon?: RegonCompanyData;
   mf?: Record<string, unknown>;
   vies?: Record<string, unknown>;
   bank_accounts?: Record<string, unknown>[];
