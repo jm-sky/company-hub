@@ -1,6 +1,6 @@
 services:
   app:
-    build: 
+    build:
       context: .
       dockerfile: docker/Dockerfile.prod
     ports:
@@ -9,6 +9,7 @@ services:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
       - SECRET_KEY=${SECRET_KEY}
+      - CORS_ORIGINS=${CORS_ORIGINS}
       - REGON_API_KEY=${REGON_API_KEY}
       - IBAN_API_KEY=${IBAN_API_KEY}
       - REGON_API_URL=${REGON_API_URL}
