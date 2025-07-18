@@ -6,6 +6,7 @@ import { CompanyResponse, ProviderStatus } from '@/types/api'
 
 interface CompanyStatusIndicatorsProps {
   companyResponse: CompanyResponse
+  requestTime: number
 }
 
 function getStatusIcon(status: ProviderStatus) {
@@ -22,7 +23,7 @@ function getStatusIcon(status: ProviderStatus) {
   }
 }
 
-export function CompanyStatusIndicators({ companyResponse }: CompanyStatusIndicatorsProps) {
+export function CompanyStatusIndicators({ companyResponse, requestTime }: CompanyStatusIndicatorsProps) {
   return (
     <Card>
       <CardHeader>
@@ -30,8 +31,9 @@ export function CompanyStatusIndicators({ companyResponse }: CompanyStatusIndica
           <Building2 className="size-5" />
           Company Information
         </CardTitle>
-        <CardDescription>
-          NIP: {formatNip(companyResponse.data.nip)}
+        <CardDescription className="flex items-center justify-between gap-2">
+          <span>NIP: {formatNip(companyResponse.data.nip)}</span>
+          <span>Requested at: {new Date(requestTime).toLocaleString()}</span>
         </CardDescription>
       </CardHeader>
       <CardContent>

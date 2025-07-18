@@ -1,4 +1,7 @@
 import httpx
+import xml.etree.ElementTree as ET
+import re
+import logging
 from datetime import datetime, timedelta
 from typing import Dict, Any, Optional
 from enum import Enum
@@ -9,7 +12,9 @@ from app.providers.base import (
     ValidationError,
 )
 from app.utils.validators import validate_nip
-from app.config import settings
+from app.config import settings, REGON_API_KEY_PLACEHOLDER
+
+logger = logging.getLogger(__name__)
 
 
 class EntityType(Enum):
@@ -126,17 +131,27 @@ class RegonProvider(BaseProvider):
             return self.session_id
 
         await self._create_session()
-        return self.session_id or ""
+        if not self.session_id:
+            raise ProviderError("Failed to obtain session ID", self.name)
+        return self.session_id
 
 
     async def _create_session(self):
         """Create a new session with REGON API."""
-        if not self.api_key or self.api_key == "your-regon-api-key":
+        logger.info(f"Creating REGON session with API URL: {self.api_url}")
+
+        if not self.api_key or self.api_key == REGON_API_KEY_PLACEHOLDER:
+            logger.error("REGON API key not configured")
             raise ProviderError("REGON API key not configured", self.name)
 
+        logger.debug(f"Using API key: {self.api_key[:10]}...")  # Show first 10 chars for debugging
+
         soap_body = f"""<?xml version="1.0" encoding="utf-8"?>
-        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://CIS/BIR/PUBL/2014/07">
-            <soap:Header/>
+        <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ns="http://CIS/BIR/PUBL/2014/07">
+            <soap:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">
+                <wsa:To>{self.api_url}</wsa:To>
+                <wsa:Action>http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Zaloguj</wsa:Action>
+            </soap:Header>
             <soap:Body>
                 <ns:Zaloguj>
                     <ns:pKluczUzytkownika>{self.api_key}</ns:pKluczUzytkownika>
@@ -145,34 +160,54 @@ class RegonProvider(BaseProvider):
         </soap:Envelope>"""
 
         headers = {
-            "Content-Type": "text/xml; charset=utf-8",
-            "SOAPAction": "http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/Zaloguj",
+            "Content-Type": "application/soap+xml; charset=utf-8",
+            "Accept": "application/soap+xml",
         }
 
         async with httpx.AsyncClient() as client:
-            response = await client.post(self.api_url, data=soap_body, headers=headers)
+            logger.debug(f"Sending SOAP request to {self.api_url}")
+            logger.debug(f"Request headers: {headers}")
+            logger.debug(f"Request body: {soap_body[:200]}...")
+
+            response = await client.post(self.api_url, content=soap_body, headers=headers)
+
+            logger.info(f"Session creation response: {response.status_code}")
+            logger.debug(f"Response content: {response.text[:500]}...")
 
             if response.status_code != 200:
+                logger.error(f"Session creation failed: {response.status_code}")
                 raise ProviderError(
                     f"Failed to create session: {response.status_code}. Response: {response.text[:200]}", self.name
                 )
 
-            # Parse session ID from response (simplified)
-            # In production, you'd use proper XML parsing
-            response_text = response.text
-            if "ZalogujResult" in response_text:
-                # Extract session ID from XML response
-                # This is a simplified extraction - use proper XML parsing in production
-                start = response_text.find("<ZalogujResult>") + len("<ZalogujResult>")
-                end = response_text.find("</ZalogujResult>")
-                self.session_id = response_text[start:end]
-                self.session_expires = datetime.now() + timedelta(
-                    minutes=30
-                )  # Sessions expire after 30 minutes
-            else:
-                raise ProviderError(
-                    "Failed to extract session ID from response", self.name
-                )
+            response_text = self._extractSoapEnvelope(response.text)
+
+            # Parse session ID from response using proper XML parsing
+            try:
+                root = ET.fromstring(response_text)
+
+                # Find the ZalogujResult element
+                namespaces = {
+                    'soap': 'http://www.w3.org/2003/05/soap-envelope',
+                    'ns': 'http://CIS/BIR/PUBL/2014/07'
+                }
+
+                result_element = root.find('.//ns:ZalogujResult', namespaces)
+                if result_element is not None and result_element.text:
+                    self.session_id = result_element.text.strip()
+                    self.session_expires = datetime.now() + timedelta(minutes=30)
+                    logger.info(f"Session created successfully: {self.session_id[:20]}...")
+                else:
+                    logger.error("Empty session ID received")
+                    raise ProviderError(
+                        "Empty session ID received from REGON API", self.name
+                    )
+            except ET.ParseError as e:
+                logger.error(f"Failed to parse XML response: {str(e)}")
+                raise ProviderError(f"Failed to parse XML response: {str(e)}", self.name)
+            except Exception as e:
+                logger.error(f"Error extracting session ID: {str(e)}")
+                raise ProviderError(f"Error extracting session ID: {str(e)}", self.name)
 
 
     async def _search_company(self, nip: str) -> Dict[str, Any]:
@@ -180,40 +215,75 @@ class RegonProvider(BaseProvider):
         session_id = await self._get_session()
 
         soap_body = f"""<?xml version="1.0" encoding="utf-8"?>
-        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://CIS/BIR/PUBL/2014/07">
-            <soap:Header/>
+        <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ns="http://CIS/BIR/PUBL/2014/07" xmlns:dat="http://CIS/BIR/PUBL/2014/07/DataContract">
+            <soap:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">
+                <wsa:Action>http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/DaneSzukajPodmioty</wsa:Action>
+                <wsa:To>{self.api_url}</wsa:To>
+            </soap:Header>
             <soap:Body>
                 <ns:DaneSzukajPodmioty>
                     <ns:pParametryWyszukiwania>
-                        <ns:Nip>{nip}</ns:Nip>
+                        <dat:Nip>{nip}</dat:Nip>
                     </ns:pParametryWyszukiwania>
                 </ns:DaneSzukajPodmioty>
             </soap:Body>
         </soap:Envelope>"""
 
         headers = {
-            "Content-Type": "text/xml; charset=utf-8",
-            "SOAPAction": "http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/DaneSzukajPodmioty",
+            "Content-Type": "application/soap+xml; charset=utf-8",
+            "Accept": "application/soap+xml",
             "sid": session_id,
         }
 
         async with httpx.AsyncClient() as client:
-            response = await client.post(self.api_url, data=soap_body, headers=headers)
+            response = await client.post(self.api_url, content=soap_body, headers=headers)
 
             if response.status_code != 200:
+                logger.error(f"Search request failed: {response.status_code}")
                 raise ProviderError(
                     f"Search request failed: {response.status_code}", self.name
                 )
 
-            # Parse response (simplified)
-            # In production, use proper XML parsing
-            response_text = response.text
-            if "DaneSzukajPodmiotyResult" in response_text:
-                # Extract and parse the search result
-                # This is a simplified parsing - use proper XML parsing in production
-                return {"raw_response": response_text, "found": True}
-            else:
-                return {"raw_response": response_text, "found": False}
+            # Parse response using proper XML parsing
+            try:
+                response_text = self._extractSoapEnvelope(response.text)
+
+                root = ET.fromstring(response_text)
+
+                namespaces = {
+                    'soap': 'http://www.w3.org/2003/05/soap-envelope',
+                    'ns': 'http://CIS/BIR/PUBL/2014/07'
+                }
+
+                result_element = root.find('.//ns:DaneSzukajPodmiotyResult', namespaces)
+                if result_element is not None and result_element.text:
+                    result_data = result_element.text.strip()
+                    if result_data:
+                        # Parse the inner XML data
+                        try:
+                            inner_root = ET.fromstring(result_data)
+                            companies = inner_root.findall('.//dane')
+                            if companies:
+                                company_data = {}
+                                for company in companies:
+                                    for child in company:
+                                        company_data[child.tag] = child.text
+                                return {"found": True, "data": company_data}
+                            else:
+                                return {"found": False, "message": "No companies found"}
+                        except ET.ParseError:
+                            # If inner XML parsing fails, return raw data
+                            return {"found": True, "raw_data": result_data}
+                    else:
+                        return {"found": False, "message": "Empty search result"}
+                else:
+                    return {"found": False, "message": "No search result element found"}
+            except ET.ParseError as e:
+                logger.error(f"Failed to parse search response: {str(e)}")
+                raise ProviderError(f"Failed to parse search response: {str(e)}", self.name)
+            except Exception as e:
+                logger.error(f"Error parsing search response: {str(e)}")
+                raise ProviderError(f"Error parsing search response: {str(e)}", self.name)
 
 
     async def _get_detailed_report(
@@ -224,8 +294,11 @@ class RegonProvider(BaseProvider):
         report_name = self.entity_report_mapping[entity_type]
 
         soap_body = f"""<?xml version="1.0" encoding="utf-8"?>
-        <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://CIS/BIR/PUBL/2014/07">
-            <soap:Header/>
+        <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:ns="http://CIS/BIR/PUBL/2014/07">
+            <soap:Header xmlns:wsa="http://www.w3.org/2005/08/addressing">
+                <wsa:Action>http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/DanePobierzPelnyRaport</wsa:Action>
+                <wsa:To>{self.api_url}</wsa:To>
+            </soap:Header>
             <soap:Body>
                 <ns:DanePobierzPelnyRaport>
                     <ns:pRegon>{regon}</ns:pRegon>
@@ -235,13 +308,13 @@ class RegonProvider(BaseProvider):
         </soap:Envelope>"""
 
         headers = {
-            "Content-Type": "text/xml; charset=utf-8",
-            "SOAPAction": "http://CIS/BIR/PUBL/2014/07/IUslugaBIRzewnPubl/DanePobierzPelnyRaport",
+            "Content-Type": "application/soap+xml; charset=utf-8",
+            "Accept": "application/soap+xml",
             "sid": session_id,
         }
 
         async with httpx.AsyncClient() as client:
-            response = await client.post(self.api_url, data=soap_body, headers=headers)
+            response = await client.post(self.api_url, content=soap_body, headers=headers)
 
             if response.status_code != 200:
                 raise ProviderError(
@@ -249,7 +322,8 @@ class RegonProvider(BaseProvider):
                 )
 
             # Parse response (simplified)
-            response_text = response.text
+            response_text = self._extractSoapEnvelope(response.text)
+
             if "DanePobierzPelnyRaportResult" in response_text:
                 return {"raw_response": response_text, "report_type": report_name.value}
             else:
@@ -264,10 +338,14 @@ class RegonProvider(BaseProvider):
         1. Search by NIP to get basic info and determine entity type
         2. Get detailed report based on entity type
         """
+        logger.info(f"Fetching data for NIP: {nip}")
+
         if not self.validate_identifier(nip):
+            logger.error(f"Invalid NIP format: {nip}")
             raise ValidationError(f"Invalid NIP format: {nip}", self.name)
 
         if self.is_rate_limited():
+            logger.warning(f"Rate limited for NIP: {nip}")
             raise RateLimitError(self.name, self.get_next_available_time())
 
         try:
@@ -282,30 +360,59 @@ class RegonProvider(BaseProvider):
                 return {
                     "found": False,
                     "nip": nip,
-                    "message": "Company not found in REGON database",
+                    "message": search_result.get("message", "Company not found in REGON database"),
+                    "fetched_at": datetime.now().isoformat(),
                 }
 
             # Step 2: Extract entity type and REGON from search result
-            # In production, properly parse XML to extract these values
-            # For now, we'll assume we found a legal person
-            entity_type = (
-                EntityType.LegalPerson
-            )  # This should be parsed from search result
-            regon = "123456789"  # This should be extracted from search result
+            if "data" in search_result:
+                company_data = search_result["data"]
+                regon = company_data.get("Regon", "")
+                typ = company_data.get("Typ", "")
 
-            # Step 3: Get detailed report
-            detailed_data = await self._get_detailed_report(regon, entity_type)
+                # Map the type to EntityType
+                if typ == "P":
+                    entity_type = EntityType.LegalPerson
+                elif typ == "F":
+                    entity_type = EntityType.NaturalPerson
+                elif typ == "LP":
+                    entity_type = EntityType.LocalLegalPersonUnit
+                elif typ == "LF":
+                    entity_type = EntityType.LocalNaturalPersonUnit
+                else:
+                    entity_type = EntityType.LegalPerson  # Default
 
-            return {
-                "found": True,
-                "nip": nip,
-                "regon": regon,
-                "entity_type": entity_type.value,
-                "report_type": detailed_data["report_type"],
-                "search_result": search_result,
-                "detailed_data": detailed_data,
-                "fetched_at": datetime.now().isoformat(),
-            }
+                # Basic company info from search
+                basic_info = {
+                    "found": True,
+                    "nip": nip,
+                    "regon": regon,
+                    "name": company_data.get("Nazwa", ""),
+                    "entity_type": entity_type.value,
+                    "search_result": search_result,
+                    "fetched_at": datetime.now().isoformat(),
+                }
+
+                # Try to get detailed report if we have REGON
+                if regon:
+                    try:
+                        detailed_data = await self._get_detailed_report(regon, entity_type)
+                        basic_info["detailed_data"] = detailed_data
+                        basic_info["report_type"] = detailed_data.get("report_type", "")
+                    except Exception as e:
+                        # If detailed report fails, still return basic info
+                        basic_info["detailed_error"] = str(e)
+
+                return basic_info
+            else:
+                # Return basic found info even if we can't parse the data
+                return {
+                    "found": True,
+                    "nip": nip,
+                    "message": "Company found but data parsing incomplete",
+                    "raw_data": search_result.get("raw_data", ""),
+                    "fetched_at": datetime.now().isoformat(),
+                }
 
         except httpx.TimeoutException:
             raise ProviderError("Request timeout", self.name, 408)
@@ -317,3 +424,13 @@ class RegonProvider(BaseProvider):
             )
         except Exception as e:
             raise ProviderError(f"Unexpected error: {str(e)}", self.name)
+
+
+    def _extractSoapEnvelope(self, response_text: str) -> str:
+        """Extract the SOAP envelope from the response text."""
+        pattern = r"(<s:Envelope.*?</s:Envelope>)"
+        match = re.search(pattern, response_text, re.DOTALL)
+        if match:
+            return match.group(1)
+        else:
+            return response_text

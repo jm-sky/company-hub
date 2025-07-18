@@ -11,10 +11,12 @@ import { CompanyDataDisplay } from '@/components/company/CompanyDataDisplay'
 
 export default function CompanySearchPage() {
   const [queriedNip, setQueriedNip] = useState('')
+  const [requestTime, setRequestTime] = useState(0)
 
   const { data: companyResponse, isLoading, error } = useCompany(queriedNip)
 
   const handleSearch = (nip: string) => {
+    setRequestTime(Date.now())
     setQueriedNip(nip)
   }
 
@@ -61,7 +63,7 @@ export default function CompanySearchPage() {
       {/* Results */}
       {companyResponse && !isLoading && (
         <div className="space-y-6">
-          <CompanyStatusIndicators companyResponse={companyResponse} />
+          <CompanyStatusIndicators companyResponse={companyResponse} requestTime={requestTime} />
           <CompanyDataDisplay companyResponse={companyResponse} />
         </div>
       )}

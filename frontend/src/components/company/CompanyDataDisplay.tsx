@@ -10,7 +10,21 @@ interface CompanyDataDisplayProps {
 }
 
 interface RegonDataCardProps {
-  regonData: Record<string, unknown>
+  regonData: Record<string, unknown> & {
+    search_result?: {
+      data?: {
+        Regon?: string
+        Nip?: string
+        Nazwa?: string
+        Wojewodztwo?: string
+        Powiat?: string
+        Gmina?: string
+        Miejscowosc?: string
+        KodPocztowy?: string
+        Ulica?: string
+      }
+    }
+  }
 }
 
 function RegonDataCard({ regonData }: RegonDataCardProps) {
@@ -36,12 +50,20 @@ function RegonDataCard({ regonData }: RegonDataCardProps) {
               <p className="text-sm font-mono">{getRegonProperty(regonData, 'regon')}</p>
             </div>
           )}
-          {getRegonProperty(regonData, 'address') && (
-            <div>
-              <Label className="text-sm font-medium">Address</Label>
-              <p className="text-sm">{getRegonProperty(regonData, 'address')}</p>
-            </div>
-          )}
+          <div className="grid grid-cols-4 gap-2">
+            <Label className="text-sm font-medium">Miasto</Label>
+            <p className="text-sm">{regonData.search_result?.data?.Miejscowosc || 'N/A'}</p>
+            <Label className="text-sm font-medium">Ulica</Label>
+            <p className="text-sm">{regonData.search_result?.data?.Ulica || 'N/A'}</p>
+            <Label className="text-sm font-medium">Kod pocztowy</Label>
+            <p className="text-sm">{regonData.search_result?.data?.KodPocztowy || 'N/A'}</p>
+            <Label className="text-sm font-medium">Województwo</Label>
+            <p className="text-sm">{regonData.search_result?.data?.Wojewodztwo || 'N/A'}</p>
+            <Label className="text-sm font-medium">Powiat</Label>
+            <p className="text-sm">{regonData.search_result?.data?.Powiat || 'N/A'}</p>
+            <Label className="text-sm font-medium">Gmina</Label>
+            <p className="text-sm">{regonData.search_result?.data?.Gmina || 'N/A'}</p>
+          </div>
           {getRegonProperty(regonData, 'status') && (
             <div>
               <Label className="text-sm font-medium">Status</Label>

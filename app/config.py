@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 
+REGON_API_KEY_PLACEHOLDER = "your-regon-api-key"
 
 class Settings(BaseSettings):
     # Database
@@ -15,7 +16,7 @@ class Settings(BaseSettings):
 
     # REGON API
     regon_api_url: str = "https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc"
-    regon_api_key: str = ""
+    regon_api_key: str = REGON_API_KEY_PLACEHOLDER
 
     # MF API
     mf_api_url: str = "https://wl-api.mf.gov.pl"

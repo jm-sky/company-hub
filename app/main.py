@@ -1,7 +1,17 @@
+import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.router import api_router
 from app.config import settings
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
+# Set specific loggers to DEBUG for more detailed output
+logging.getLogger("app.providers.regon").setLevel(logging.DEBUG)
 
 app = FastAPI(
     title="CompanyHub API",
