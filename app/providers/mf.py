@@ -7,6 +7,7 @@ import httpx
 
 from app.providers.base import BaseProvider, ProviderError, RateLimitError, ValidationError
 from app.utils.validators import validate_nip
+from app.utils.mf_address_parser import parse_mf_address
 
 logger = logging.getLogger(__name__)
 
@@ -48,9 +49,11 @@ class MfProvider(BaseProvider):
             Dict containing MF data
         """
         if not self.validate_identifier(nip):
+            logger.error(f"Invalid NIP: {nip}")
             raise ValidationError(f"Invalid NIP: {nip}", self.name)
 
         if self.is_rate_limited():
+            logger.error(f"Rate limit exceeded for NIP: {nip}")
             raise RateLimitError(self.name, self.get_next_available_time())
 
         # Get date parameter (format: YYYY-MM-DD)
@@ -66,12 +69,8 @@ class MfProvider(BaseProvider):
 
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
-                logger.info(f"MF API request: {url} with params: {params}")
-
                 response = await client.get(url, params=params)
                 self.last_request_time = datetime.now(timezone.utc)
-
-                logger.info(f"MF API response: {response.status_code}")
 
                 if response.status_code == 404:
                     return {
@@ -110,7 +109,6 @@ class MfProvider(BaseProvider):
 
     def _parse_mf_response(self, data: Dict[str, Any], nip: str, date: str) -> Dict[str, Any]:
         """Parse MF API response."""
-        logger.debug(f"Parsing MF response: {data}")
 
         if not isinstance(data, dict):
             logger.error(f"MF API returned non-dict response: {type(data)}")
@@ -135,7 +133,7 @@ class MfProvider(BaseProvider):
         result = data["result"]
 
         if not result or "subject" not in result:
-            logger.debug(f"MF API result structure: {result}")
+            logger.info(f"MF API result structure: {result}")
             return {
                 "found": False,
                 "nip": nip,
@@ -159,7 +157,7 @@ class MfProvider(BaseProvider):
 
             # Extract business address
             address = None
-            if "workingAddress" in subject:
+            if "workingAddress" in subject and subject["workingAddress"] is not None:
                 addr_data = subject["workingAddress"]
                 address = {
                     "street": addr_data.get("street", ""),
@@ -172,16 +170,19 @@ class MfProvider(BaseProvider):
 
             # Extract residence address
             residence_address = None
-            if "residenceAddress" in subject:
+            if "residenceAddress" in subject and subject["residenceAddress"] is not None:
                 addr_data = subject["residenceAddress"]
-                residence_address = {
-                    "street": addr_data.get("street", ""),
-                    "building_number": addr_data.get("buildingNumber", ""),
-                    "apartment_number": addr_data.get("apartmentNumber", ""),
-                    "city": addr_data.get("city", ""),
-                    "postal_code": addr_data.get("postalCode", ""),
-                    "country": addr_data.get("country", "Polska")
-                }
+                if isinstance(addr_data, dict):
+                    residence_address = {
+                        "street": addr_data.get("street", ""),
+                        "building_number": addr_data.get("buildingNumber", ""),
+                        "apartment_number": addr_data.get("apartmentNumber", ""),
+                        "city": addr_data.get("city", ""),
+                        "postal_code": addr_data.get("postalCode", ""),
+                        "country": addr_data.get("country", "Polska")
+                    }
+                elif isinstance(addr_data, str):
+                    residence_address = parse_mf_address(addr_data)
 
             # Extract representatives
             representatives = []

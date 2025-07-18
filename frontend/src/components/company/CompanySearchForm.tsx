@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Search, X } from 'lucide-react'
+import { RefreshCcw, Search, X } from 'lucide-react'
 import { normalizeNip, isValidNipFormat } from '@/lib/utils/nip'
 import { useCompanyRefresh } from '@/lib/hooks/useCompanies'
 
@@ -14,11 +14,11 @@ interface CompanySearchFormProps {
   currentNip?: string
 }
 
-export function CompanySearchForm({ 
-  onSearch, 
-  onClear, 
-  isLoading = false, 
-  currentNip 
+export function CompanySearchForm({
+  onSearch,
+  onClear,
+  isLoading = false,
+  currentNip
 }: CompanySearchFormProps) {
   const [searchNip, setSearchNip] = useState('')
   const refreshMutation = useCompanyRefresh()
@@ -80,9 +80,10 @@ export function CompanySearchForm({
                     type="button"
                     variant="outline"
                     onClick={handleRefresh}
-                    disabled={refreshMutation.isPending}
+                    disabled={refreshMutation.isPending || currentNip !== searchNip}
                   >
-                    🔄 Refresh
+                    <RefreshCcw className="size-4" />
+                    Refresh
                   </Button>
                   <Button type="button" variant="outline" onClick={handleClear}>
                     <X className="size-4" />

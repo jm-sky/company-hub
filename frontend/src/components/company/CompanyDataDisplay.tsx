@@ -18,6 +18,7 @@ import {
   formatMfBankAccount,
   getMfStatusBadgeVariant,
 } from '@/lib/utils/mf'
+import { StatusBadge } from '../ui/status-badge'
 
 interface CompanyDataDisplayProps {
   companyResponse: CompanyResponse
@@ -384,9 +385,7 @@ function MfDataCard({ mfData }: MfDataCardProps) {
                         Zweryfikowany: {formatMfDate(account.date)}
                       </p>
                     </div>
-                    <Badge variant="outline" className="text-xs">
-                      {account.validated ? 'Zweryfikowany' : 'Niezweryfikowany'}
-                    </Badge>
+                    <StatusBadge status={account.validated ? "success" : "warning"} label={account.validated ? 'Zweryfikowany' : 'Niezweryfikowany'} />
                   </div>
                 ))}
                 {mfData.has_virtual_accounts && (

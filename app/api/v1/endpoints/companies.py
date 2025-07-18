@@ -56,7 +56,10 @@ async def get_company_data(
     # Parse refresh parameter
     refresh_providers = []
     if refresh:
-        refresh_providers = [p.strip() for p in refresh.split(",")]
+        if refresh == 'true':
+            refresh_providers = ['regon', 'mf']
+        else:
+            refresh_providers = [p.strip() for p in refresh.split(",")]
 
     # Get or create company record
     company: Company = get_or_create_company(db, normalized_nip)
@@ -145,7 +148,7 @@ async def get_company_data(
             store_mf_data(db, company.id, mf_data)  # type: ignore
 
             # Update company name if available and not already set
-            if "name" in mf_data and mf_data["name"] and not company.name:
+            if "name" in mf_data and mf_data["name"] and not company.name:  # type: ignore
                 company.name = mf_data["name"]  # type: ignore
                 db.commit()
 
