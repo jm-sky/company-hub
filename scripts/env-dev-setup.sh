@@ -13,7 +13,7 @@ if ! command -v docker &> /dev/null; then
 fi
 
 # Check if Docker Compose is installed
-if ! command -v docker-compose &> /dev/null; then
+if ! command -v docker &> /dev/null || ! docker compose version &> /dev/null; then
     echo "❌ Docker Compose is not installed. Please install Docker Compose first."
     exit 1
 fi
@@ -27,9 +27,9 @@ fi
 
 # Build and start services
 echo "🔧 Building and starting services..."
-docker-compose down --volumes
-docker-compose build
-docker-compose up -d
+docker compose down --volumes
+docker compose build
+docker compose up -d
 
 echo "⏳ Waiting for services to be ready..."
 sleep 10
@@ -38,7 +38,7 @@ sleep 10
 echo "🔍 Checking service health..."
 
 # Check PostgreSQL
-if docker-compose exec db pg_isready -U companyhub -d companyhub; then
+if docker compose exec db pg_isready -U companyhub -d companyhub; then
     echo "✅ PostgreSQL is ready"
 else
     echo "❌ PostgreSQL is not ready"
@@ -46,7 +46,7 @@ else
 fi
 
 # Check Redis
-if docker-compose exec redis redis-cli ping | grep -q PONG; then
+if docker compose exec redis redis-cli ping | grep -q PONG; then
     echo "✅ Redis is ready"
 else
     echo "❌ Redis is not ready"
@@ -67,14 +67,14 @@ echo ""
 echo "📍 Services:"
 echo "  • API:              http://localhost:${APP_PORT:-8000}"
 echo "  • API Docs:         http://localhost:${APP_PORT:-8000}/docs"
-echo "  • Database Admin:   http://localhost:${ADMINER_PORT:-8080}"
+echo "  • Database Admin:   http://localhost:${PGADMIN_PORT:-8080}"
 echo "  • Redis Admin:      http://localhost:${REDIS_COMMANDER_PORT:-8081}"
 echo ""
 echo "🔧 Useful commands:"
-echo "  • View logs:        docker-compose logs -f"
-echo "  • Stop services:    docker-compose down"
-echo "  • Rebuild:          docker-compose build"
-echo "  • Run tests:        docker-compose exec app pytest"
+echo "  • View logs:        docker compose logs -f"
+echo "  • Stop services:    docker compose down"
+echo "  • Rebuild:          docker compose build"
+echo "  • Run tests:        docker compose exec app pytest"
 echo ""
 echo "📝 Don't forget to:"
 echo "  • Update .env with your API keys"
