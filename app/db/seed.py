@@ -25,11 +25,20 @@ def seed_admin_user(db: Session) -> None:
         print("✅ Admin user already exists!")
         return
 
+    # Determine if password is already hashed (bcrypt hashes start with $2a$, $2b$, or $2y$)
+    admin_password = settings.admin_password
+    if admin_password.startswith(('$2a$', '$2b$', '$2y$')):
+        # Password is already a bcrypt hash, use as-is
+        password_hash = admin_password
+    else:
+        # Password is plain text, hash it
+        password_hash = hash_password(admin_password)
+
     # Create admin user
     admin_user = User(
         email=settings.admin_email,
         name=settings.admin_name,
-        password_hash=hash_password(settings.admin_password),
+        password_hash=password_hash,
         plan="enterprise",
         is_active=True,
         created_at=datetime.now(timezone.utc),
