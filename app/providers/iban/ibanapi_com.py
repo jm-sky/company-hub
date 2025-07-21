@@ -86,8 +86,8 @@ class IbanApiComClient:
             result = self._safe_get(data, "result", 0)
             message = self._safe_get(data, "message", "")
 
-            # Check if result indicates success (1 = success, 0 = failure)
-            is_valid = result == 1
+            # Check if result indicates success (200 = HTTP success, not 1)
+            is_valid = result == 200
 
             if not is_valid:
                 return IbanValidationResult(

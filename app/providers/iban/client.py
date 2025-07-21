@@ -22,6 +22,8 @@ class IbanEnrichmentClient:
         self.openiban_api = OpenIBANAPI()
         self.apilayer_api = APILayerBankDataAPI(api_key=apilayer_api_key)
 
+        logger.debug(f"IBAN Enrichment Client initialized - IbanApi.com: {bool(self.ibanapi_com)}, OpenIBAN: True, APILayer: {bool(apilayer_api_key)}")
+
 
     async def enrich_bank_account(self, account_number: str) -> Dict[str, Any]:
         """
@@ -47,6 +49,7 @@ class IbanEnrichmentClient:
 
         # Try primary API (IbanApi.com - free tier with API key)
         if self.ibanapi_com:
+            logger.debug(f"Trying IbanApi.com for {clean_iban}")
             try:
                 result = await self.ibanapi_com.validate_iban(clean_iban)
                 logger.debug(f"IbanApi.com result for {clean_iban}: valid={result.is_valid}, has_bank_details={result.bank_details is not None}")
@@ -61,6 +64,7 @@ class IbanEnrichmentClient:
                 logger.warning(f"IbanApi.com API failed for IBAN {clean_iban}: {str(e)}")
 
         # Try fallback API (OpenIBAN - free)
+        logger.debug(f"Trying OpenIBAN for {clean_iban}")
         try:
             result = await self.openiban_api.validate_iban(clean_iban)
             logger.debug(f"OpenIBAN result for {clean_iban}: valid={result.is_valid}, has_bank_details={result.bank_details is not None}")
@@ -70,6 +74,19 @@ class IbanEnrichmentClient:
                 return self._format_enrichment_result(result)
             elif result.is_valid:
                 logger.debug(f"OpenIBAN validated IBAN {clean_iban} but no bank details available")
+                # Return valid IBAN without enrichment
+                return {
+                    "account_number": account_number,
+                    "formatted_iban": clean_iban,
+                    "validated": True,  # IBAN is valid
+                    "bank_name": None,
+                    "bic": None,
+                    "swift_code": None,
+                    "enrichment_available": False,
+                    "enrichment_source": "openiban",
+                    "enriched_at": None,
+                    "enrichment_error": "Bank details not available from free service"
+                }
 
         except Exception as e:
             logger.warning(f"OpenIBAN API failed for IBAN {clean_iban}: {str(e)}")
@@ -88,9 +105,9 @@ class IbanEnrichmentClient:
         except Exception as e:
             logger.warning(f"APILayer API failed for IBAN {clean_iban}: {str(e)}")
 
-        # Both APIs failed
-        logger.error(f"All IBAN enrichment APIs failed for {clean_iban}")
-        return self._create_empty_enrichment(account_number, "Enrichment APIs unavailable")
+        # All APIs failed to provide bank details, but IBAN might still be valid
+        logger.warning(f"All IBAN enrichment APIs failed to provide bank details for {clean_iban}")
+        return self._create_empty_enrichment(account_number, "No bank details available from any API")
 
     def _is_valid_iban_format(self, iban: str) -> bool:
         """Basic IBAN format validation."""

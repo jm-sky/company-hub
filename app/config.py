@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     iban_api_key: str = ""
 
     # IbanApi.com (different service)
-    iban_api_com_key: str = ""
+    ibanapi_com_key: str = ""
 
     # APILayer Bank Data API
     apilayer_api_key: str = ""

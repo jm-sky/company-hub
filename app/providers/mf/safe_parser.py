@@ -87,11 +87,11 @@ async def safe_parse_bank_accounts(accounts: Any, date: str, enable_enrichment: 
         try:
             from app.providers.iban import IbanEnrichmentClient
             from app.config import settings
-            
+
             # Try to get IbanApi.com key from settings
             ibanapi_key = getattr(settings, 'ibanapi_com_key', None)
             apilayer_key = getattr(settings, 'apilayer_api_key', None)
-            
+
             enrichment_client = IbanEnrichmentClient(
                 ibanapi_com_key=ibanapi_key,
                 apilayer_api_key=apilayer_key

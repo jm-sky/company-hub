@@ -13,8 +13,8 @@ logging.basicConfig(
 
 # Set specific loggers to DEBUG for more detailed output
 # logging.getLogger("app.providers.regon").setLevel(logging.DEBUG)
-logging.getLogger("app.providers.iban").setLevel(logging.DEBUG)
-logging.getLogger("app.providers.mf").setLevel(logging.DEBUG)
+# logging.getLogger("app.providers.iban").setLevel(logging.DEBUG)
+# logging.getLogger("app.providers.mf").setLevel(logging.DEBUG)
 
 app = FastAPI(
     title="CompanyHub API",
