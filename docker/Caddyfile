@@ -1,0 +1,52 @@
+companyhub.saasbase.ovh {
+    reverse_proxy frontend:3000
+    encode gzip
+    
+    header {
+        # Security headers
+        X-Frame-Options DENY
+        X-Content-Type-Options nosniff
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy strict-origin-when-cross-origin
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    }
+    
+    # Handle static assets efficiently
+    @static {
+        path /_next/static/* /static/* /favicon.ico /robots.txt
+    }
+    handle @static {
+        header Cache-Control "public, max-age=31536000, immutable"
+        reverse_proxy frontend:3000
+    }
+}
+
+api.companyhub.saasbase.ovh {
+    reverse_proxy app:8000
+    encode gzip
+    
+    header {
+        # Security headers
+        X-Frame-Options DENY
+        X-Content-Type-Options nosniff
+        X-XSS-Protection "1; mode=block"
+        Referrer-Policy strict-origin-when-cross-origin
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    }
+    
+    # CORS handling for API
+    @cors_preflight {
+        method OPTIONS
+    }
+    handle @cors_preflight {
+        header Access-Control-Allow-Origin "https://companyhub.saasbase.ovh"
+        header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        header Access-Control-Allow-Headers "Authorization, Content-Type, X-Requested-With"
+        header Access-Control-Max-Age "86400"
+        respond 200
+    }
+    
+    # Add CORS headers to all responses
+    header Access-Control-Allow-Origin "https://companyhub.saasbase.ovh"
+    header Access-Control-Allow-Credentials "true"
+}
