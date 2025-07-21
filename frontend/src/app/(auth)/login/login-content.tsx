@@ -14,6 +14,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { loginSchema, LoginFormData } from '@/lib/schemas/auth';
 import { LogoText } from '@/components/ui/logo-text';
+import { OAuthButtons } from '@/components/auth/OAuthButtons';
 
 export function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,8 +38,24 @@ export function LoginContent() {
 
   useEffect(() => {
     const reason = searchParams.get('reason');
+    const error = searchParams.get('error');
+    
     if (reason === 'session-expired') {
       setSessionExpiredMessage('Your session has expired. Please log in again.');
+    } else if (error) {
+      switch (error) {
+        case 'oauth-denied':
+          setSessionExpiredMessage('OAuth authentication was cancelled.');
+          break;
+        case 'oauth-failed':
+          setSessionExpiredMessage('OAuth authentication failed. Please try again.');
+          break;
+        case 'oauth-invalid':
+          setSessionExpiredMessage('Invalid OAuth parameters. Please try again.');
+          break;
+        default:
+          setSessionExpiredMessage('An error occurred. Please try again.');
+      }
     }
   }, [searchParams]);
 
@@ -151,6 +168,21 @@ export function LoginContent() {
               </Alert>
             )}
           </form>
+
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+            
+            <OAuthButtons className="mt-4" />
+          </div>
 
           <div className="mt-6 text-center text-sm">
             <span className="text-muted-foreground">Don&apos;t have an account? </span>

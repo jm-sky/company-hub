@@ -20,13 +20,25 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String(255), unique=True, nullable=False, index=True)
     name = Column(String(255), nullable=True)
-    password_hash = Column(String(255), nullable=False)
+    password_hash = Column(String(255), nullable=True)  # Made nullable for OAuth users
     plan = Column(String(20), default="free")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
     is_active = Column(Boolean, default=True)
+    
+    # OAuth provider fields
+    github_id = Column(String(50), unique=True, nullable=True, index=True)
+    github_username = Column(String(255), nullable=True)
+    google_id = Column(String(255), unique=True, nullable=True, index=True)
+    google_email = Column(String(255), nullable=True)
+    
+    # Shared OAuth fields
+    avatar_url = Column(String(500), nullable=True)
+    oauth_provider = Column(String(50), nullable=True)  # 'github', 'google', etc.
+    oauth_access_token = Column(Text, nullable=True)  # Encrypted storage
+    oauth_refresh_token = Column(Text, nullable=True)  # Encrypted storage
 
     # Relationships
     api_tokens = relationship("ApiToken", back_populates="user")

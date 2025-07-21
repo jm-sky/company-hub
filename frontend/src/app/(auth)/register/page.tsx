@@ -15,6 +15,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { registerSchema, RegisterFormData } from '@/lib/schemas/auth';
 import { LogoText } from '@/components/ui/logo-text';
+import { OAuthButtons } from '@/components/auth/OAuthButtons';
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -163,6 +164,21 @@ export default function RegisterPage() {
               </Alert>
             )}
           </form>
+
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+            
+            <OAuthButtons className="mt-4" />
+          </div>
 
           <div className="mt-6 text-center text-sm">
             <span className="text-muted-foreground">Already have an account? </span>

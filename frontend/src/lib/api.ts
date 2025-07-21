@@ -104,6 +104,17 @@ class ApiClient {
     return response.data;
   }
 
+  // OAuth endpoints
+  async getOAuthAuthUrl(provider: string): Promise<ApiResponse<{ auth_url: string; state: string }>> {
+    const response = await this.client.post('/api/v1/auth/oauth/auth-url', { provider });
+    return response.data;
+  }
+
+  async oauthCallback(provider: string, code: string, state: string): Promise<ApiResponse<AuthResponse>> {
+    const response = await this.client.post(`/api/v1/auth/oauth/${provider}/callback`, { code, state });
+    return response.data;
+  }
+
   // Company endpoints
   async getCompany(nip: string, refresh: boolean = false): Promise<ApiResponse<CompanyResponse>> {
     const params = refresh ? { refresh: 'true' } : {};

@@ -14,6 +14,10 @@ class UserResponse(BaseModel):
     plan: str
     created_at: datetime
     is_active: bool
+    oauth_provider: Optional[str] = None
+    github_username: Optional[str] = None
+    google_email: Optional[str] = None
+    avatar_url: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -39,3 +43,17 @@ class RegisterResponse(ApiResponse):
 
 class UserProfileResponse(ApiResponse):
     data: UserResponse
+
+# OAuth-specific schemas
+class OAuthCallbackRequest(BaseModel):
+    code: str
+    state: str
+
+class OAuthCallbackResponse(ApiResponse):
+    data: LoginResponseData
+
+class OAuthAuthUrlRequest(BaseModel):
+    provider: str  # 'github' or 'google'
+
+class OAuthAuthUrlResponse(ApiResponse):
+    data: dict  # {"auth_url": "...", "state": "..."}

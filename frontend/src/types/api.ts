@@ -36,10 +36,16 @@ export interface User {
   id: string;
   email: string;
   name?: string;
-  subscription_tier: SubscriptionTier;
-  api_calls_used: number;
-  api_calls_limit: number;
+  subscription_tier?: SubscriptionTier;
+  plan?: string;
+  api_calls_used?: number;
+  api_calls_limit?: number;
   created_at: string;
+  is_active: boolean;
+  oauth_provider?: string;
+  github_username?: string;
+  google_email?: string;
+  avatar_url?: string;
 }
 
 export interface ApiKey {
