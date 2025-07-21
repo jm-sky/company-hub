@@ -1,8 +1,9 @@
 import logging
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.router import api_router
 from app.config import settings
+from app.exception_handlers import http_exception_handler
 
 # Configure logging
 logging.basicConfig(
@@ -27,6 +28,9 @@ app.add_middleware(
     allow_methods=settings.cors_allow_methods.split(","),
     allow_headers=settings.cors_allow_headers.split(",") if settings.cors_allow_headers != "*" else ["*"],
 )
+
+# Add HTTP exception handler to ensure CORS headers are included
+app.add_exception_handler(HTTPException, http_exception_handler)
 
 app.include_router(api_router, prefix="/api/v1")
 
