@@ -145,11 +145,38 @@ export interface RegonCompanyData {
   detailed_error?: string;
 }
 
-// MF (Biała Lista) API response structures
+// MF (Biała Lista) API response structures  
+export interface MfBankAccountEnrichment {
+  account_number: string;
+  formatted_iban: string;
+  validated: boolean;
+  bank_name: string;
+  bic: string;
+  swift_code: string;
+  bank_code: string;
+  branch_code: string;
+  bank_city: string;
+  bank_country: string;
+  bank_country_code: string;
+  currency: string;
+  enrichment_source: string;
+  enriched_at: string;
+  enrichment_available: boolean;
+  enrichment_error?: string;
+}
+
 export interface MfBankAccount {
   account_number: string;
   validated: boolean;
   date: string;
+  // IBAN enrichment fields
+  bank_name?: string;
+  bic?: string;
+  swift_code?: string;
+  formatted_iban?: string;
+  enrichment_available?: boolean;
+  enrichment?: MfBankAccountEnrichment;
+  enrichment_error?: string;
 }
 
 export interface MfAddress {

@@ -46,7 +46,7 @@ class MfApiClient:
                     }
 
             # Parse successful response
-            return self.data_parser.parse_response(response["data"], nip, date)
+            return await self.data_parser.parse_response(response["data"], nip, date)
 
         except Exception as e:
             logger.error(f"MF API client error for NIP {nip}: {str(e)}")

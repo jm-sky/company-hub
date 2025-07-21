@@ -1,8 +1,7 @@
 """Safe parsing utilities for MF API responses with robust type checking."""
 
 import logging
-from typing import Dict, Any, List, Optional, Union
-from datetime import datetime, timezone
+from typing import Dict, Any, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -67,8 +66,8 @@ def safe_parse_address(addr_data: Any) -> Optional[Dict[str, str]]:
     }
 
 
-def safe_parse_bank_accounts(accounts: Any, date: str) -> List[Dict[str, Any]]:
-    """Safely parse bank account numbers with type checking."""
+async def safe_parse_bank_accounts(accounts: Any, date: str, enable_enrichment: bool = True, country_code: str = 'PL') -> List[Dict[str, Any]]:
+    """Safely parse bank account numbers with type checking and optional IBAN enrichment."""
     if not accounts:
         return []
 
@@ -76,19 +75,68 @@ def safe_parse_bank_accounts(accounts: Any, date: str) -> List[Dict[str, Any]]:
         logger.warning(f"Bank accounts expected list, got {type(accounts)}: {accounts}")
         # Try to convert single string to list
         if isinstance(accounts, str):
-            return [{"account_number": accounts, "validated": True, "date": date}]
-        return []
+            accounts = [accounts]
+        else:
+            return []
 
     result = []
+    enrichment_client = None
+
+    # Initialize IBAN enrichment client if enabled
+    if enable_enrichment:
+        try:
+            from app.providers.iban import IbanEnrichmentClient
+            from app.config import settings
+            
+            # Try to get IbanApi.com key from settings
+            ibanapi_key = getattr(settings, 'ibanapi_com_key', None)
+            apilayer_key = getattr(settings, 'apilayer_api_key', None)
+            
+            enrichment_client = IbanEnrichmentClient(
+                ibanapi_com_key=ibanapi_key,
+                apilayer_api_key=apilayer_key
+            )
+            logger.debug(f"IBAN enrichment client initialized with IbanApi.com: {bool(ibanapi_key)}, APILayer: {bool(apilayer_key)}")
+        except Exception as e:
+            logger.warning(f"IBAN enrichment unavailable: {str(e)}")
+            enable_enrichment = False
+
     for account in accounts:
-        if isinstance(account, str) and account.strip():
-            result.append({
-                "account_number": account.strip(),
-                "validated": True,
-                "date": date
-            })
-        else:
+        if not isinstance(account, str) or not account.strip():
             logger.debug(f"Skipping invalid bank account: {account}")
+            continue
+
+        clean_account = format_bank_account_as_iban(account=account, country_code=country_code)
+
+        # Basic account info
+        account_info = {
+            "account_number": clean_account,
+            "validated": True,
+            "date": date
+        }
+
+        # Add IBAN enrichment if enabled
+        if enable_enrichment and enrichment_client:
+            try:
+                enrichment = await enrichment_client.enrich_bank_account(clean_account)
+                account_info.update({
+                    "enrichment": enrichment,
+                    "bank_name": enrichment.get("bank_name"),
+                    "bic": enrichment.get("bic"),
+                    "swift_code": enrichment.get("swift_code"),
+                    "formatted_iban": enrichment.get("formatted_iban", clean_account),
+                    "enrichment_available": enrichment.get("enrichment_available", False)
+                })
+            except Exception as e:
+                logger.warning(f"Failed to enrich account {clean_account}: {str(e)}")
+                account_info.update({
+                    "enrichment_available": False,
+                    "enrichment_error": str(e)
+                })
+        else:
+            account_info["enrichment_available"] = False
+
+        result.append(account_info)
 
     return result
 
@@ -188,3 +236,13 @@ def validate_mf_response_structure(data: Dict[str, Any]) -> bool:
     except Exception as e:
         logger.error(f"Error validating MF response structure: {str(e)}")
         return False
+
+
+def format_bank_account_as_iban(account: str, country_code: str = 'PL') -> str:
+    """Format bank account as IBAN."""
+    account = account.replace(" ", "").upper().strip()
+
+    if account.startswith(country_code):
+        return account
+
+    return f'{country_code}{account}'.strip()

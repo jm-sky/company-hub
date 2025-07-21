@@ -7,12 +7,14 @@ from app.exception_handlers import http_exception_handler
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.WARNING,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 
 # Set specific loggers to DEBUG for more detailed output
-logging.getLogger("app.providers.regon").setLevel(logging.DEBUG)
+# logging.getLogger("app.providers.regon").setLevel(logging.DEBUG)
+logging.getLogger("app.providers.iban").setLevel(logging.DEBUG)
+logging.getLogger("app.providers.mf").setLevel(logging.DEBUG)
 
 app = FastAPI(
     title="CompanyHub API",

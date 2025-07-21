@@ -15,10 +15,9 @@ import {
   formatMfDate,
   formatMfVatStatus,
   formatMfAddress,
-  formatMfBankAccount,
   getMfStatusBadgeVariant,
 } from '@/lib/utils/mf'
-import { StatusBadge } from '../ui/status-badge'
+import { BankAccountCard } from './BankAccountCard'
 
 interface CompanyDataDisplayProps {
   companyResponse: CompanyResponse
@@ -376,17 +375,9 @@ function MfDataCard({ mfData }: MfDataCardProps) {
                 <CreditCard className="size-4" />
                 Rachunki bankowe
               </h4>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {mfData.bank_accounts.map((account, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                    <div>
-                      <p className="text-sm font-mono">{formatMfBankAccount(account.account_number)}</p>
-                      <p className="text-xs text-muted-foreground">
-                        Zweryfikowany: {formatMfDate(account.date)}
-                      </p>
-                    </div>
-                    <StatusBadge status={account.validated ? "success" : "warning"} label={account.validated ? 'Zweryfikowany' : 'Niezweryfikowany'} />
-                  </div>
+                  <BankAccountCard key={index} account={account} index={index} />
                 ))}
                 {mfData.has_virtual_accounts && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">

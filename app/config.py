@@ -27,6 +27,12 @@ class Settings(BaseSettings):
     iban_api_url: str = "https://api.iban.com/clients/api"
     iban_api_key: str = ""
 
+    # IbanApi.com (different service)
+    iban_api_com_key: str = ""
+
+    # APILayer Bank Data API
+    apilayer_api_key: str = ""
+
     # Cache TTL (in seconds)
     cache_ttl_default: int = 86400  # 1 day
     cache_ttl_bank_accounts: int = 604800  # 7 days
