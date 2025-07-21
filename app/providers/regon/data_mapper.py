@@ -1,8 +1,6 @@
 """Data mapper for REGON API types and responses."""
 
 import logging
-import xml.etree.ElementTree as ET
-from datetime import datetime
 from typing import Dict, Any
 from enum import Enum
 
@@ -57,59 +55,20 @@ class RegonDataMapper:
         return self.entity_report_mapping[entity_type]
 
     def parse_search_response(self, response_xml: str) -> Dict[str, Any]:
-        """Parse search response XML."""
-        try:
-            # Parse the inner XML data
-            inner_root = ET.fromstring(response_xml)
-            companies = inner_root.findall('.//dane')
-
-            if companies:
-                company_data = {}
-                for company in companies:
-                    for child in company:
-                        company_data[child.tag] = child.text
-                return {"found": True, "data": company_data}
-            else:
-                return {"found": False, "message": "No companies found"}
-
-        except ET.ParseError:
-            # If inner XML parsing fails, return raw data
-            return {"found": True, "raw_data": response_xml}
+        """Parse search response XML with robust error handling."""
+        from .safe_parser import safe_parse_regon_search_xml
+        return safe_parse_regon_search_xml(response_xml)
 
     def build_basic_company_info(
         self,
         nip: str,
         search_result: Dict[str, Any]
     ) -> Dict[str, Any]:
-        """Build basic company info from search result."""
-        if not search_result["found"] or "data" not in search_result:
-            return {
-                "found": False,
-                "nip": nip,
-                "message": search_result.get("message", "Company not found in REGON database"),
-                "fetched_at": datetime.now().isoformat(),
-            }
-
-        company_data = search_result["data"]
-        regon = company_data.get("Regon", "")
-        typ = company_data.get("Typ", "")
-
-        # Map the type to EntityType
-        entity_type = self.map_type_to_entity(typ)
-
-        return {
-            "found": True,
-            "nip": nip,
-            "regon": regon,
-            "name": company_data.get("Nazwa", ""),
-            "entity_type": entity_type.value,
-            "search_result": search_result,
-            "fetched_at": datetime.now().isoformat(),
-        }
+        """Build basic company info from search result with robust error handling."""
+        from .safe_parser import safe_build_regon_company_info
+        return safe_build_regon_company_info(nip, search_result)
 
     def extract_detailed_data(self, response_xml: str, report_type: str) -> Dict[str, Any]:
-        """Extract detailed data from report response."""
-        return {
-            "raw_response": response_xml,
-            "report_type": report_type
-        }
+        """Extract detailed data from report response with robust error handling."""
+        from .safe_parser import safe_extract_regon_report_data
+        return safe_extract_regon_report_data(response_xml, report_type)
