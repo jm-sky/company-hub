@@ -80,16 +80,16 @@ def seed_test_companies(db: Session) -> None:
 
     test_companies = [
         {
-            "nip": "1234567890",
-            "name": "Test Company Poland Sp. z o.o.",
+            "nip": "5242584303",
+            "name": "DEV Made IT Jan Madeyski",
         },
         {
-            "nip": "9876543210",
-            "name": "Example Business S.A.",
+            "nip": "1251695425",
+            "name": "Blueprint Lab Mateusz Tryniszewski",
         },
         {
-            "nip": "5555555555",
-            "name": "Demo Corporation Ltd.",
+            "nip": "5262381626",
+            "name": "SAVA GROUP SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ",
         }
     ]
 
