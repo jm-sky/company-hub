@@ -6,6 +6,7 @@ from app.schemas.base import ApiResponse
 class LoginRequest(BaseModel):
     email: str
     password: str
+    recaptcha_token: Optional[str] = None
 
 class UserResponse(BaseModel):
     id: int
@@ -33,6 +34,7 @@ class RegisterRequest(BaseModel):
     email: str
     password: str
     name: Optional[str] = None
+    recaptcha_token: Optional[str] = None
 
 class RegisterResponseData(BaseModel):
     token: str
@@ -48,6 +50,7 @@ class UserProfileResponse(ApiResponse):
 class OAuthCallbackRequest(BaseModel):
     code: str
     state: str
+    recaptcha_token: Optional[str] = None
 
 class OAuthCallbackResponse(ApiResponse):
     data: LoginResponseData

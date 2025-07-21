@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/lib/providers/query-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { ReCaptchaProvider } from "@/components/providers/recaptcha-provider";
 import { APP_CONFIG } from "@/config/app";
 
 const geistSans = Geist({
@@ -37,7 +38,9 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>
-            {children}
+            <ReCaptchaProvider>
+              {children}
+            </ReCaptchaProvider>
           </QueryProvider>
         </ThemeProvider>
       </body>

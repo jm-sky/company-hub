@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useSearchParams, useParams, useRouter } from 'next/navigation';
 import { useOAuthCallback } from '@/lib/hooks/useOAuth';
+import { useRecaptcha } from '@/lib/hooks/useRecaptcha';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 
@@ -11,6 +12,7 @@ export default function OAuthCallbackPage() {
   const params = useParams();
   const router = useRouter();
   const oauthCallback = useOAuthCallback();
+  const { getToken: getRecaptchaToken, isEnabled: recaptchaEnabled } = useRecaptcha();
 
   const provider = params?.provider as string;
   const code = searchParams?.get('code');
@@ -39,9 +41,18 @@ export default function OAuthCallbackPage() {
       return;
     }
 
-    // Process OAuth callback
-    oauthCallback.mutate({ provider, code, state });
-  }, [provider, code, state, error, router, oauthCallback]);
+    // Process OAuth callback with reCAPTCHA
+    const processCallback = async () => {
+      let recaptchaToken = null;
+      if (recaptchaEnabled) {
+        recaptchaToken = await getRecaptchaToken('oauth_callback');
+      }
+      
+      oauthCallback.mutate({ provider, code, state, recaptchaToken });
+    };
+    
+    processCallback();
+  }, [provider, code, state, error, router, oauthCallback, recaptchaEnabled, getRecaptchaToken]);
 
   if (error) {
     return (

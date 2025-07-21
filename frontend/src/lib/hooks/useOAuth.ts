@@ -34,9 +34,9 @@ export const useOAuthCallback = () => {
   return useMutation<
     ApiResponse<AuthResponse>,
     Error,
-    { provider: string; code: string; state: string }
+    { provider: string; code: string; state: string; recaptchaToken?: string | null }
   >({
-    mutationFn: async ({ provider, code, state }) => {
+    mutationFn: async ({ provider, code, state, recaptchaToken }) => {
       // Verify state parameter for CSRF protection
       if (typeof window !== 'undefined') {
         const storedState = localStorage.getItem('oauth_state');
@@ -46,7 +46,7 @@ export const useOAuthCallback = () => {
         localStorage.removeItem('oauth_state');
       }
 
-      return await apiClient.oauthCallback(provider, code, state);
+      return await apiClient.oauthCallback(provider, code, state, recaptchaToken);
     },
     onSuccess: (data) => {
       if (data.success && data.data) {

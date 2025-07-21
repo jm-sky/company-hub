@@ -10,6 +10,20 @@ export interface ApiResponse<T = unknown> {
   success: boolean;
 }
 
+// Authentication endpoints
+export interface LoginCredentials {
+  email: string;
+  password: string;
+  recaptcha_token?: string;
+}
+
+export interface OAuthCallbackRequest {
+  code: string;
+  state: string;
+  recaptcha_token?: string;
+}
+
+// Company endpoints
 export interface Company {
   nip: string;
   name: string;
@@ -75,6 +89,7 @@ export interface RegisterRequest {
   email: string;
   password: string;
   name: string;
+  recaptcha_token?: string;
 }
 
 export interface AuthResponse {
@@ -151,7 +166,7 @@ export interface RegonCompanyData {
   detailed_error?: string;
 }
 
-// MF (Biała Lista) API response structures  
+// MF (Biała Lista) API response structures
 export interface MfBankAccountEnrichment {
   account_number: string;
   formatted_iban: string;

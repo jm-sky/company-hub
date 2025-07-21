@@ -5,8 +5,8 @@ export const useAuth = () => {
   const queryClient = useQueryClient();
 
   const loginMutation = useMutation({
-    mutationFn: ({ email, password }: { email: string; password: string }) =>
-      apiClient.login(email, password),
+    mutationFn: ({ email, password, recaptchaToken }: { email: string; password: string; recaptchaToken?: string | null }) =>
+      apiClient.login(email, password, recaptchaToken),
     onSuccess: (data) => {
       apiClient.setAuth(data.data.token);
       queryClient.setQueryData(['user'], data.data.user);
@@ -14,8 +14,8 @@ export const useAuth = () => {
   });
 
   const registerMutation = useMutation({
-    mutationFn: ({ email, password, name }: { email: string; password: string; name: string }) =>
-      apiClient.register(email, password, name),
+    mutationFn: ({ email, password, name, recaptchaToken }: { email: string; password: string; name: string; recaptchaToken?: string | null }) =>
+      apiClient.register(email, password, name, recaptchaToken),
     onSuccess: (data) => {
       apiClient.setAuth(data.data.token);
       queryClient.setQueryData(['user'], data.data.user);

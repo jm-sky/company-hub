@@ -15,6 +15,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { loginSchema, LoginFormData } from '@/lib/schemas/auth';
 import { LogoText } from '@/components/ui/logo-text';
 import { OAuthButtons } from '@/components/auth/OAuthButtons';
+import { useRecaptcha } from '@/lib/hooks/useRecaptcha';
 
 export function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,6 +24,7 @@ export function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
+  const { getToken: getRecaptchaToken, isEnabled: recaptchaEnabled } = useRecaptcha();
 
   const {
     register,
@@ -61,7 +63,16 @@ export function LoginContent() {
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      await login.mutateAsync(data);
+      // Get reCAPTCHA token if enabled
+      let recaptchaToken = null;
+      if (recaptchaEnabled) {
+        recaptchaToken = await getRecaptchaToken('login');
+        if (!recaptchaToken) {
+          throw new Error('reCAPTCHA verification failed. Please try again.');
+        }
+      }
+
+      await login.mutateAsync({ ...data, recaptchaToken });
       setIsRedirecting(true);
       router.push('/dashboard');
     } catch (error) {

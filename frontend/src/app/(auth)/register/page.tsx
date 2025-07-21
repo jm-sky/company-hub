@@ -16,12 +16,14 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { registerSchema, RegisterFormData } from '@/lib/schemas/auth';
 import { LogoText } from '@/components/ui/logo-text';
 import { OAuthButtons } from '@/components/auth/OAuthButtons';
+import { useRecaptcha } from '@/lib/hooks/useRecaptcha';
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
   const { register: registerUser } = useAuth();
+  const { getToken: getRecaptchaToken, isEnabled: recaptchaEnabled } = useRecaptcha();
 
   const {
     register,
@@ -33,10 +35,20 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
+      // Get reCAPTCHA token if enabled
+      let recaptchaToken = null;
+      if (recaptchaEnabled) {
+        recaptchaToken = await getRecaptchaToken('register');
+        if (!recaptchaToken) {
+          throw new Error('reCAPTCHA verification failed. Please try again.');
+        }
+      }
+
       await registerUser.mutateAsync({
         name: data.name,
         email: data.email,
         password: data.password,
+        recaptchaToken,
       });
       router.push('/dashboard');
     } catch (error) {

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
@@ -20,18 +20,33 @@ from app.deps import get_db, get_current_active_user
 from app.crud.users import authenticate_user, create_user, get_user_by_email, create_oauth_user, get_oauth_user
 from app.utils.security import create_access_token
 from app.security.oauth import oauth_service
+from app.middleware.recaptcha import verify_recaptcha_token
 
 router = APIRouter()
 
 
 @router.post("/login", response_model=LoginResponse)
-async def login(request: LoginRequest, db: Session = Depends(get_db)):
+async def login(
+    request: LoginRequest,
+    http_request: Request,
+    db: Session = Depends(get_db)
+):
     """
     Authenticate user
 
     - **email**: User email
     - **password**: User password
+    - **recaptcha_token**: reCAPTCHA token for verification (optional)
     """
+
+    # Verify reCAPTCHA if provided
+    if request.recaptcha_token:
+        await verify_recaptcha_token(
+            recaptcha_token=request.recaptcha_token,
+            request=http_request,
+            min_score=0.5,
+            action="login"
+        )
 
     # Authenticate user
     user = authenticate_user(db, request.email, request.password)
@@ -65,14 +80,28 @@ async def login(request: LoginRequest, db: Session = Depends(get_db)):
 
 
 @router.post("/register", response_model=RegisterResponse)
-async def register(request: RegisterRequest, db: Session = Depends(get_db)):
+async def register(
+    request: RegisterRequest,
+    http_request: Request,
+    db: Session = Depends(get_db)
+):
     """
     Register new user
 
     - **email**: User email
     - **password**: User password
     - **name**: User name (optional)
+    - **recaptcha_token**: reCAPTCHA token for verification (optional)
     """
+
+    # Verify reCAPTCHA if provided
+    if request.recaptcha_token:
+        await verify_recaptcha_token(
+            recaptcha_token=request.recaptcha_token,
+            request=http_request,
+            min_score=0.7,
+            action="register"
+        )
 
     # Check if user already exists
     existing_user = get_user_by_email(db, request.email)
@@ -128,7 +157,7 @@ async def get_current_user_info(current_user=Depends(get_current_active_user)):
         google_email=current_user.google_email,
         avatar_url=current_user.avatar_url
     )
-    
+
     return UserProfileResponse(
         data=user_data,
         success=True
@@ -139,13 +168,13 @@ async def get_current_user_info(current_user=Depends(get_current_active_user)):
 async def get_oauth_auth_url(request: OAuthAuthUrlRequest):
     """
     Get OAuth authorization URL for a provider
-    
+
     - **provider**: OAuth provider name ('github' or 'google')
     """
     try:
         state = oauth_service.generate_state()
         auth_url = oauth_service.get_authorization_url(request.provider, state)
-        
+
         return OAuthAuthUrlResponse(
             data={"auth_url": auth_url, "state": state},
             success=True
@@ -161,22 +190,33 @@ async def get_oauth_auth_url(request: OAuthAuthUrlRequest):
 async def oauth_callback(
     provider: str,
     request: OAuthCallbackRequest,
+    http_request: Request,
     db: Session = Depends(get_db)
 ):
     """
     Handle OAuth callback
-    
+
     - **provider**: OAuth provider name ('github' or 'google')
     - **code**: Authorization code from OAuth provider
     - **state**: CSRF protection state parameter
+    - **recaptcha_token**: reCAPTCHA token for verification (optional)
     """
     try:
+        # Verify reCAPTCHA if provided
+        if request.recaptcha_token:
+            await verify_recaptcha_token(
+                recaptcha_token=request.recaptcha_token,
+                request=http_request,
+                min_score=0.5,
+                action="oauth_callback"
+            )
+
         # Complete OAuth flow and get user info
         oauth_user_info = await oauth_service.complete_oauth_flow(provider, request.code)
-        
+
         # Check if user already exists by provider ID
         existing_user = get_oauth_user(db, provider, oauth_user_info.provider_id)
-        
+
         if existing_user:
             # Update existing user's OAuth info
             user = existing_user
@@ -191,15 +231,15 @@ async def oauth_callback(
             # Create new user or link OAuth to existing email
             token_response = await oauth_service.exchange_code_for_token(provider, request.code)
             user = create_oauth_user(
-                db, 
-                oauth_user_info, 
-                token_response.access_token, 
+                db,
+                oauth_user_info,
+                token_response.access_token,
                 token_response.refresh_token
             )
-        
+
         # Create JWT token
         access_token = create_access_token(data={"sub": str(user.id)})
-        
+
         user_response = UserResponse(
             id=user.id,
             email=user.email,
@@ -212,12 +252,12 @@ async def oauth_callback(
             google_email=user.google_email,
             avatar_url=user.avatar_url
         )
-        
+
         return OAuthCallbackResponse(
             data=LoginResponseData(token=access_token, user=user_response),
             success=True
         )
-        
+
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

@@ -21,7 +21,7 @@ def upgrade() -> None:
     op.alter_column('users', 'password_hash',
                existing_type=sa.VARCHAR(length=255),
                nullable=True)
-    
+
     op.add_column('users', sa.Column('github_id', sa.String(length=50), nullable=True))
     op.add_column('users', sa.Column('github_username', sa.String(length=255), nullable=True))
     op.add_column('users', sa.Column('google_id', sa.String(length=255), nullable=True))
@@ -30,7 +30,7 @@ def upgrade() -> None:
     op.add_column('users', sa.Column('oauth_provider', sa.String(length=50), nullable=True))
     op.add_column('users', sa.Column('oauth_access_token', sa.Text(), nullable=True))
     op.add_column('users', sa.Column('oauth_refresh_token', sa.Text(), nullable=True))
-    
+
     op.create_index('ix_users_github_id', 'users', ['github_id'], unique=True)
     op.create_index('ix_users_google_id', 'users', ['google_id'], unique=True)
     # ### end Alembic commands ###
@@ -48,7 +48,7 @@ def downgrade() -> None:
     op.drop_column('users', 'google_id')
     op.drop_column('users', 'github_username')
     op.drop_column('users', 'github_id')
-    
+
     op.alter_column('users', 'password_hash',
                existing_type=sa.VARCHAR(length=255),
                nullable=False)
