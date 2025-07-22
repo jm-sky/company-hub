@@ -23,12 +23,22 @@ git pull
 log "✅ Git pull completed successfully!"
 
 # ------------------------------------------------------------
+# Build
+# ------------------------------------------------------------
+
+log "🏗️ Rebuilding backend container..."
+
+docker compose -f docker-compose.prod.yml build app
+
+log "✅ Backend container rebuilt successfully!"
+
+# ------------------------------------------------------------
 # Dependencies
 # ------------------------------------------------------------
 
 log "📦 Installing backend dependencies..."
 
-docker compose exec app pip install -r requirements.txt
+docker compose -f docker-compose.prod.yml exec app pip install -r requirements.txt
 
 log "✅ Backend dependencies installed successfully!"
 
@@ -38,7 +48,7 @@ log "✅ Backend dependencies installed successfully!"
 
 log "🗃️ Running database migrations..."
 
-docker compose exec app alembic upgrade head
+docker compose -f docker-compose.prod.yml exec app alembic upgrade head
 
 log "✅ Database migrations completed successfully!"
 
@@ -48,7 +58,7 @@ log "✅ Database migrations completed successfully!"
 
 log "🔄 Restarting backend services..."
 
-docker compose restart
+docker compose -f docker-compose.prod.yml up -d app
 
 log "✅ Backend services restarted successfully!"
 
