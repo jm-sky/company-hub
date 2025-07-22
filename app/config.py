@@ -52,6 +52,23 @@ class Settings(BaseSettings):
     admin_email: str = "admin@companyhub.local"
     admin_password: str = ""
 
+    # OAuth Providers
+    github_client_id: str = ""
+    github_client_secret: str = ""
+    github_redirect_uri: str = "http://localhost:3000/auth/callback/github"
+
+    google_client_id: str = ""
+    google_client_secret: str = ""
+    google_redirect_uri: str = "http://localhost:3000/auth/callback/google"
+
+    # reCAPTCHA Configuration
+    recaptcha_public_key: str = ""
+    recaptcha_secret_key: str = ""
+    recaptcha_verify_url: str = "https://www.google.com/recaptcha/api/siteverify"
+    recaptcha_enabled: bool = True
+    recaptcha_min_score: float = 0.5
+    recaptcha_timeout: int = 10
+
     class Config:
         env_file = ".env"
         extra = "ignore"

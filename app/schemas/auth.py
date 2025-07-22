@@ -6,6 +6,7 @@ from app.schemas.base import ApiResponse
 class LoginRequest(BaseModel):
     email: str
     password: str
+    recaptcha_token: Optional[str] = None
 
 class UserResponse(BaseModel):
     id: int
@@ -14,6 +15,10 @@ class UserResponse(BaseModel):
     plan: str
     created_at: datetime
     is_active: bool
+    oauth_provider: Optional[str] = None
+    github_username: Optional[str] = None
+    google_email: Optional[str] = None
+    avatar_url: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -29,6 +34,7 @@ class RegisterRequest(BaseModel):
     email: str
     password: str
     name: Optional[str] = None
+    recaptcha_token: Optional[str] = None
 
 class RegisterResponseData(BaseModel):
     token: str
@@ -39,3 +45,18 @@ class RegisterResponse(ApiResponse):
 
 class UserProfileResponse(ApiResponse):
     data: UserResponse
+
+# OAuth-specific schemas
+class OAuthCallbackRequest(BaseModel):
+    code: str
+    state: str
+    recaptcha_token: Optional[str] = None
+
+class OAuthCallbackResponse(ApiResponse):
+    data: LoginResponseData
+
+class OAuthAuthUrlRequest(BaseModel):
+    provider: str  # 'github' or 'google'
+
+class OAuthAuthUrlResponse(ApiResponse):
+    data: dict  # {"auth_url": "...", "state": "..."}

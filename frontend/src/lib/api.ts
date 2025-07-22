@@ -10,13 +10,16 @@ import {
   CheckoutSession,
   SubscriptionTier,
   CompanyResponse,
+  LoginCredentials,
+  RegisterRequest,
+  OAuthCallbackRequest,
 } from '@/types/api';
 
 class ApiClient {
   private client: AxiosInstance;
   private authToken: string | null = null;
 
-  constructor(baseURL: string = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000') {
+  constructor(baseURL: string = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000') {
     this.client = axios.create({
       baseURL,
       timeout: 10000,
@@ -76,13 +79,21 @@ class ApiClient {
   }
 
   // Authentication endpoints
-  async login(email: string, password: string): Promise<ApiResponse<AuthResponse>> {
-    const response = await this.client.post('/api/v1/auth/login', { email, password });
+  async login(email: string, password: string, recaptchaToken?: string | null): Promise<ApiResponse<AuthResponse>> {
+    const data: LoginCredentials = { email, password };
+    if (recaptchaToken) {
+      data.recaptcha_token = recaptchaToken;
+    }
+    const response = await this.client.post('/api/v1/auth/login', data);
     return response.data;
   }
 
-  async register(email: string, password: string, name: string): Promise<ApiResponse<AuthResponse>> {
-    const response = await this.client.post('/api/v1/auth/register', { email, password, name });
+  async register(email: string, password: string, name: string, recaptchaToken?: string | null): Promise<ApiResponse<AuthResponse>> {
+    const data: RegisterRequest = { email, password, name };
+    if (recaptchaToken) {
+      data.recaptcha_token = recaptchaToken;
+    }
+    const response = await this.client.post('/api/v1/auth/register', data);
     return response.data;
   }
 
@@ -101,6 +112,21 @@ class ApiClient {
       current_password: currentPassword,
       new_password: newPassword
     });
+    return response.data;
+  }
+
+  // OAuth endpoints
+  async getOAuthAuthUrl(provider: string): Promise<ApiResponse<{ auth_url: string; state: string }>> {
+    const response = await this.client.post('/api/v1/auth/oauth/auth-url', { provider });
+    return response.data;
+  }
+
+  async oauthCallback(provider: string, code: string, state: string, recaptchaToken?: string | null): Promise<ApiResponse<AuthResponse>> {
+    const data: OAuthCallbackRequest = { code, state };
+    if (recaptchaToken) {
+      data.recaptcha_token = recaptchaToken;
+    }
+    const response = await this.client.post(`/api/v1/auth/oauth/${provider}/callback`, data);
     return response.data;
   }
 

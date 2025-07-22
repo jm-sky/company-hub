@@ -6,12 +6,13 @@
 
 ## 🚀 Features
 
-- **Multi-source data aggregation**: REGON (GUS), MF (Biała Lista), VIES, and IBAN enrichment
-- **Intelligent caching**: 1-day TTL with premium bypass options
-- **Smart rate limiting**: Time-based limits respecting external API constraints
-- **Webhook notifications**: Real-time callbacks for data changes
-- **Partial responses**: Get available data even when some providers are rate-limited
-- **Premium subscriptions**: Scheduled validation and priority access
+- [x] **Multi-source data aggregation**: REGON (GUS), MF (Biała Lista), VIES, and IBAN enrichment
+- [x] **Intelligent caching**: 1-day TTL with premium bypass options
+- [x] **Smart rate limiting**: Time-based limits respecting external API constraints
+- [ ] **Webhook notifications**: Real-time callbacks for data changes
+- [x] **Partial responses**: Get available data even when some providers are rate-limited
+- [ ] **Premium subscriptions**: Scheduled validation and priority access
+- [x] **OAuth authentication**: Secure login with GitHub and Google OAuth 2.0 providers
 
 ## 🏗️ Architecture
 
@@ -64,7 +65,7 @@
    ```bash
    # Create database
    createdb companyhub
-   
+
    # Run migrations
    alembic upgrade head
    ```
@@ -78,18 +79,60 @@ The API will be available at `http://localhost:8000`
 
 ## 🔧 Configuration
 
-Key environment variables:
+Configure the application using environment variables. Copy `.env.example` to `.env` and update values:
 
 ```env
-# Database
-DATABASE_URL=postgresql://user:password@localhost/companyhub
+# Application
+APP_PORT=8000
 
-# External APIs
-REGON_API_KEY=your-regon-api-key
-IBAN_API_KEY=your-iban-api-key
+# Database
+DATABASE_URL=postgresql://companyhub:password@db:5432/companyhub
+DB_PORT=5432
+
+# Redis
+REDIS_URL=redis://redis:6379
+REDIS_PORT=6379
 
 # Security
-SECRET_KEY=your-secret-key
+SECRET_KEY=your-secret-key-change-this-in-production
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# CORS settings
+CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+CORS_ALLOW_CREDENTIALS=true
+
+# OAuth Providers
+GITHUB_CLIENT_ID=your-github-oauth-app-client-id
+GITHUB_CLIENT_SECRET=your-github-oauth-app-secret
+GITHUB_REDIRECT_URI=http://localhost:3000/auth/callback/github
+
+GOOGLE_CLIENT_ID=your-google-oauth-client-id
+GOOGLE_CLIENT_SECRET=your-google-oauth-client-secret
+GOOGLE_REDIRECT_URI=http://localhost:3000/auth/callback/google
+
+# Google reCAPTCHA (optional security layer)
+RECAPTCHA_PUBLIC_KEY=your-recaptcha-site-key
+RECAPTCHA_SECRET_KEY=your-recaptcha-secret-key
+RECAPTCHA_ENABLED=true
+RECAPTCHA_MIN_SCORE=0.5
+
+# External Data Provider APIs
+REGON_API_KEY=your-regon-gus-api-key
+IBAN_API_KEY=your-iban-api-key
+IBANAPI_COM_KEY=your-ibanapi-com-key
+
+# Cache Configuration
+CACHE_TTL_DEFAULT=86400        # 1 day
+CACHE_TTL_BANK_ACCOUNTS=604800 # 7 days
+
+# Rate Limiting
+RATE_LIMIT_FREE_TIER=5         # requests per hour
+RATE_LIMIT_PREMIUM_TIER=1000   # requests per hour
+
+# Admin Settings
+ADMIN_EMAIL=admin@companyhub.com
+ADMIN_PASSWORD=admin123
 ```
 
 ## 📖 API Usage

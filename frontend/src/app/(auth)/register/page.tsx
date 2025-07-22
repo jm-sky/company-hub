@@ -15,12 +15,15 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { registerSchema, RegisterFormData } from '@/lib/schemas/auth';
 import { LogoText } from '@/components/ui/logo-text';
+import { OAuthButtons } from '@/components/auth/OAuthButtons';
+import { useRecaptcha } from '@/lib/hooks/useRecaptcha';
 
 export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
   const { register: registerUser } = useAuth();
+  const { getToken: getRecaptchaToken, isEnabled: recaptchaEnabled } = useRecaptcha();
 
   const {
     register,
@@ -32,10 +35,20 @@ export default function RegisterPage() {
 
   const onSubmit = async (data: RegisterFormData) => {
     try {
+      // Get reCAPTCHA token if enabled
+      let recaptchaToken = null;
+      if (recaptchaEnabled) {
+        recaptchaToken = await getRecaptchaToken('register');
+        if (!recaptchaToken) {
+          throw new Error('reCAPTCHA verification failed. Please try again.');
+        }
+      }
+
       await registerUser.mutateAsync({
         name: data.name,
         email: data.email,
         password: data.password,
+        recaptchaToken,
       });
       router.push('/dashboard');
     } catch (error) {
@@ -163,6 +176,21 @@ export default function RegisterPage() {
               </Alert>
             )}
           </form>
+
+          <div className="mt-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+            
+            <OAuthButtons className="mt-4" />
+          </div>
 
           <div className="mt-6 text-center text-sm">
             <span className="text-muted-foreground">Already have an account? </span>

@@ -5,21 +5,49 @@
 
 set -e
 
-echo "Starting frontend upgrade..."
+# Function to log with timestamp
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+}
+
+log "🚀 Starting frontend upgrade..."
 
 # Navigate to frontend directory
 cd frontend
 
-echo "Pulling latest changes..."
+# ------------------------------------------------------------
+# Git
+# ------------------------------------------------------------
+
+log "📥 Pulling latest changes..."
+
 git pull
 
-echo "Installing dependencies..."
-pnpm i
+log "✅ Git pull completed successfully!"
 
-echo "Building frontend..."
-pnpm build
+# ------------------------------------------------------------
+# Dependencies
+# ------------------------------------------------------------
 
-echo "Restarting service..."
+log "📦 Installing dependencies..."
+
+pnpm install
+
+# ------------------------------------------------------------
+# Build
+# ------------------------------------------------------------
+
+log "🏗️ Building frontend..."
+
+pnpm run build
+
+# ------------------------------------------------------------
+# Restart
+# ------------------------------------------------------------
+
+log "🔄 Restarting service..."
 sudo systemctl restart company-hub-web.service
 
-echo "Frontend upgrade completed successfully!"
+# ------------------------------------------------------------
+
+log "🎉 Frontend upgrade completed successfully!"
