@@ -212,7 +212,7 @@ async def oauth_callback(
             )
 
         # Complete OAuth flow and get user info
-        oauth_user_info = await oauth_service.complete_oauth_flow(provider, request.code)
+        oauth_user_info, token_response = await oauth_service.complete_oauth_flow(provider, request.code)
 
         # Check if user already exists by provider ID
         existing_user = get_oauth_user(db, provider, oauth_user_info.provider_id)
@@ -229,7 +229,7 @@ async def oauth_callback(
             db.refresh(user)
         else:
             # Create new user or link OAuth to existing email
-            token_response = await oauth_service.exchange_code_for_token(provider, request.code)
+            # token_response is already obtained from complete_oauth_flow
             user = create_oauth_user(
                 db,
                 oauth_user_info,

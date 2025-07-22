@@ -257,11 +257,11 @@ class OAuthService:
         provider = self.get_provider(provider_name)
         return await provider.get_user_info(access_token)
 
-    async def complete_oauth_flow(self, provider_name: str, code: str) -> OAuthUserInfo:
+    async def complete_oauth_flow(self, provider_name: str, code: str) -> tuple[OAuthUserInfo, OAuthTokenResponse]:
         """Complete OAuth flow: exchange code for token and get user info"""
         token_response = await self.exchange_code_for_token(provider_name, code)
         user_info = await self.get_user_info(provider_name, token_response.access_token)
-        return user_info
+        return user_info, token_response
 
 
 # Global OAuth service instance
