@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Frontend upgrade script
-# Pulls latest changes, installs dependencies, builds, and restarts service
+# Backend upgrade script
+# Installs dependencies, runs migrations, and restarts services
 
 set -e
 
@@ -10,10 +10,7 @@ log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
 }
 
-log "🚀 Starting frontend upgrade..."
-
-# Navigate to frontend directory
-cd frontend
+log "🚀 Starting backend upgrade..."
 
 # ------------------------------------------------------------
 # Git
@@ -29,25 +26,32 @@ log "✅ Git pull completed successfully!"
 # Dependencies
 # ------------------------------------------------------------
 
-log "📦 Installing dependencies..."
+log "📦 Installing backend dependencies..."
 
-pnpm install
+docker compose exec app pip install -r requirements.txt
+
+log "✅ Backend dependencies installed successfully!"
 
 # ------------------------------------------------------------
-# Build
+# Database
 # ------------------------------------------------------------
 
-log "🏗️ Building frontend..."
+log "🗃️ Running database migrations..."
 
-pnpm run build
+docker compose exec app alembic upgrade head
+
+log "✅ Database migrations completed successfully!"
 
 # ------------------------------------------------------------
 # Restart
 # ------------------------------------------------------------
 
-log "🔄 Restarting service..."
-sudo systemctl restart company-hub-web.service
+log "🔄 Restarting backend services..."
+
+docker compose restart
+
+log "✅ Backend services restarted successfully!"
 
 # ------------------------------------------------------------
 
-log "🎉 Frontend upgrade completed successfully!"
+log "🎉 Backend upgrade completed successfully!"

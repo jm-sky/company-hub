@@ -1,46 +1,36 @@
 #!/bin/bash
 
-# Git pull
+# Full upgrade script - runs both backend and frontend upgrades
 
 set -e
 
-echo "🔄 Pulling latest changes..."
+# Get script directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Function to log with timestamp
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
+}
+
+log "🚀 Starting full system upgrade..."
+
+log "📥 Pulling latest changes..."
 git pull
 
-# ------------------------------------------------------------
-# Backend
-# ------------------------------------------------------------
-
-echo "🗃️ Running database migrations..."
-
-docker compose exec app alembic upgrade head
-
-echo "✅ Database migrations completed successfully!"
-
-echo "🔄 Restarting backend services..."
-
-docker compose restart
-
-echo "✅ Backend services restarted successfully!"
+log "✅ Git pull completed successfully!"
 
 # ------------------------------------------------------------
-# Frontend
+# Backend Upgrade
 # ------------------------------------------------------------
-echo "🔄 Installing frontend dependencies..."
+log "🔧 Running backend upgrade..."
 
-cd frontend
+"$SCRIPT_DIR/back-upgrade.sh"
 
-pnpm install
+# ------------------------------------------------------------
+# Frontend Upgrade
+# ------------------------------------------------------------
+log "🎨 Running frontend upgrade..."
 
-pnpm run build
+"$SCRIPT_DIR/front-upgrade.sh"
 
-echo "✅ Frontend build completed successfully!"
-
-echo "🔄 Restarting frontend services..."
-
-sudo systemctl restart company-hub-web.service
-
-echo "✅ Frontend services restarted successfully!"
-
-echo "Upgrade completed successfully!"
+log "🎉 Full system upgrade completed successfully!"
