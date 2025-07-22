@@ -8,16 +8,13 @@ export const useRecaptcha = () => {
     const enabled = process.env.NEXT_PUBLIC_RECAPTCHA_ENABLED === 'true';
     
     if (!enabled || !executeRecaptcha) {
-      console.log('reCAPTCHA disabled or not loaded');
       return null;
     }
 
     try {
       const token = await executeRecaptcha(action);
-      console.log('reCAPTCHA token generated for action:', action);
       return token;
-    } catch (error) {
-      console.error('reCAPTCHA execution failed:', error);
+    } catch {
       return null;
     }
   }, [executeRecaptcha]);

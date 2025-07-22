@@ -40,9 +40,11 @@ export const useOAuthCallback = () => {
       // Verify state parameter for CSRF protection
       if (typeof window !== 'undefined') {
         const storedState = localStorage.getItem('oauth_state');
+        
         if (!storedState || storedState !== state) {
           throw new Error('Invalid state parameter - possible CSRF attack');
         }
+        
         localStorage.removeItem('oauth_state');
       }
 
@@ -54,10 +56,12 @@ export const useOAuthCallback = () => {
         apiClient.setAuth(data.data.token);
         
         // Update user data in cache
-        queryClient.setQueryData(['auth', 'user'], data.data.user);
+        queryClient.setQueryData(['user'], data.data.user);
         
         // Redirect to dashboard
         router.push('/dashboard');
+      } else {
+        router.push('/login?error=oauth-failed');
       }
     },
     onError: (error) => {

@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useAuth } from '@/lib/hooks/useAuth';
+import { useAuth, useUser } from '@/lib/hooks/useAuth';
 import { loginSchema, LoginFormData } from '@/lib/schemas/auth';
 import { LogoText } from '@/components/ui/logo-text';
 import { OAuthButtons } from '@/components/auth/OAuthButtons';
@@ -24,6 +24,7 @@ export function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
+  const { data: user, isLoading } = useUser();
   const { getToken: getRecaptchaToken, isEnabled: recaptchaEnabled } = useRecaptcha();
 
   const {
@@ -39,6 +40,12 @@ export function LoginContent() {
   });
 
   useEffect(() => {
+    // Redirect authenticated users to dashboard
+    if (!isLoading && user) {
+      router.push('/dashboard');
+      return;
+    }
+
     const reason = searchParams.get('reason');
     const error = searchParams.get('error');
     
@@ -59,7 +66,7 @@ export function LoginContent() {
           setSessionExpiredMessage('An error occurred. Please try again.');
       }
     }
-  }, [searchParams]);
+  }, [searchParams, user, isLoading, router]);
 
   const onSubmit = async (data: LoginFormData) => {
     try {
@@ -80,6 +87,19 @@ export function LoginContent() {
       setIsRedirecting(false);
     }
   };
+
+  // Show loading while checking authentication status
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md space-y-4">
+          <div className="h-8 bg-muted rounded animate-pulse" />
+          <div className="h-32 bg-muted rounded animate-pulse" />
+          <div className="h-10 bg-muted rounded animate-pulse" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
