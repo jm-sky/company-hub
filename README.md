@@ -4,6 +4,9 @@
 
 **CompanyHub** is a FastAPI-based service that aggregates company data from multiple Polish government and EU sources, providing a unified REST API with intelligent caching, rate limiting, and webhook notifications.
 
+<img width="1535" height="897" alt="companyhub" src="https://github.com/user-attachments/assets/1941daa4-3fd3-4f61-b71f-308be102e442" />
+
+
 ## 🚀 Features
 
 - [x] **Multi-source data aggregation**: REGON (GUS), MF (Biała Lista), VIES, and IBAN enrichment
