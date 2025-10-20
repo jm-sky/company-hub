@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, UserPlus, AlertCircle } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +23,9 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations('auth');
+  const common = useTranslations('common');
   const { register: registerUser } = useAuth();
   const { getToken: getRecaptchaToken, isEnabled: recaptchaEnabled } = useRecaptcha();
 
@@ -40,7 +44,7 @@ export default function RegisterPage() {
       if (recaptchaEnabled) {
         recaptchaToken = await getRecaptchaToken('register');
         if (!recaptchaToken) {
-          throw new Error('reCAPTCHA verification failed. Please try again.');
+          throw new Error(t('recaptchaVerificationFailed'));
         }
       }
 
@@ -50,7 +54,7 @@ export default function RegisterPage() {
         password: data.password,
         recaptchaToken,
       });
-      router.push('/dashboard');
+      router.push(`/${locale}/dashboard`);
     } catch (error) {
       console.error('Registration failed:', error);
     }
@@ -60,19 +64,19 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Create your account</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('createYourAccount')}</CardTitle>
           <CardDescription>
-            Get started with <LogoText size="sm" className="inline" /> and access Polish company data
+            {t('getStartedWith')} <LogoText size="sm" className="inline" /> {t('andAccessPolishCompanyData')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="name">{t('fullName')}</Label>
               <Input
                 id="name"
                 type="text"
-                placeholder="Enter your full name"
+                placeholder={t('enterYourFullName')}
                 {...register('name')}
                 className={errors.name ? 'border-destructive' : ''}
               />
@@ -82,11 +86,11 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t('enterYourEmail')}
                 {...register('email')}
                 className={errors.email ? 'border-destructive' : ''}
               />
@@ -96,12 +100,12 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('password')}</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Create a password"
+                  placeholder={t('createAPassword')}
                   {...register('password')}
                   className={errors.password ? 'border-destructive pr-10' : 'pr-10'}
                 />
@@ -123,12 +127,12 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">{t('confirmPassword')}</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="Confirm your password"
+                  placeholder={t('confirmYourPassword')}
                   {...register('confirmPassword')}
                   className={errors.confirmPassword ? 'border-destructive pr-10' : 'pr-10'}
                 />
@@ -157,12 +161,12 @@ export default function RegisterPage() {
               {registerUser.isPending ? (
                 <>
                   <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                  Creating account...
+                  {common('creatingAccount')}
                 </>
               ) : (
                 <>
                   <UserPlus className="size-4 mr-2" />
-                  Create account
+                  {t('createAccount')}
                 </>
               )}
             </Button>
@@ -171,7 +175,7 @@ export default function RegisterPage() {
               <Alert variant="destructive">
                 <AlertCircle className="size-4" />
                 <AlertDescription>
-                  {registerUser.error instanceof Error ? registerUser.error.message : 'Registration failed. Please try again.'}
+                  {registerUser.error instanceof Error ? registerUser.error.message : t('registrationFailed')}
                 </AlertDescription>
               </Alert>
             )}
@@ -184,7 +188,7 @@ export default function RegisterPage() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with
+                  {common('orContinueWith')}
                 </span>
               </div>
             </div>
@@ -193,9 +197,9 @@ export default function RegisterPage() {
           </div>
 
           <div className="mt-6 text-center text-sm">
-            <span className="text-muted-foreground">Already have an account? </span>
-            <Link href="/login" className="text-brand hover:text-brand/80 font-medium">
-              Sign in
+            <span className="text-muted-foreground">{t('alreadyHaveAccount')} </span>
+            <Link href={`/${locale}/login`} className="text-brand hover:text-brand/80 font-medium">
+              {t('signIn')}
             </Link>
           </div>
         </CardContent>

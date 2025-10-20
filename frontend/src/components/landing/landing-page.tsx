@@ -15,42 +15,45 @@ import { useRef } from 'react'
 import { ButtonLink } from '../ui/button-link'
 import AddressFooter from './address-footer'
 import LandingNav from './landing-nav'
+import { useTranslations, useLocale } from 'next-intl'
 
 export default function LandingPage() {
   const featuresRef = useRef(null);
-
   const featuresInView = useInView(featuresRef, { once: true, amount: 0.3 });
+  const t = useTranslations('landing')
+  const common = useTranslations('common')
+  const locale = useLocale()
 
   const features = [
     {
       icon: Building2,
-      title: 'Company Data',
-      description: 'Access comprehensive Polish company information from REGON, MF, and VIES databases.'
+      title: t('features.companyData.title'),
+      description: t('features.companyData.description')
     },
     {
       icon: Search,
-      title: 'Smart Search',
-      description: 'Find companies instantly with our advanced search and filtering capabilities.'
+      title: t('features.smartSearch.title'),
+      description: t('features.smartSearch.description')
     },
     {
       icon: Zap,
-      title: 'Real-time Updates',
-      description: 'Get notified of company changes with our webhook and real-time notification system.'
+      title: t('features.realTimeUpdates.title'),
+      description: t('features.realTimeUpdates.description')
     },
     {
       icon: Shield,
-      title: 'Secure & Reliable',
-      description: 'Enterprise-grade security with 99.9% uptime guarantee for your business needs.'
+      title: t('features.secureReliable.title'),
+      description: t('features.secureReliable.description')
     }
   ]
 
   const benefits = [
-    'Access to 3+ million Polish companies',
-    'Real-time data updates and notifications',
-    'REST API with comprehensive documentation',
-    'Webhook support for automated workflows',
-    'Historical data tracking and analytics',
-    'Enterprise-grade security and compliance'
+    t('benefits.accessToCompanies'),
+    t('benefits.realTimeDataUpdates'),
+    t('benefits.restApiDocumentation'),
+    t('benefits.webhookSupport'),
+    t('benefits.historicalDataTracking'),
+    t('benefits.enterpriseGradeSecurity')
   ]
 
   return (
@@ -80,26 +83,22 @@ export default function LandingPage() {
           >
             <div className="space-y-4">
               <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl md:text-6xl">
-                Polish Company Data
-                <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">
-                  {' '}API Platform
-                </span>
+                {t('title')}
               </h1>
               <p className="text-xl text-muted-foreground max-w-[600px]">
-                Access comprehensive Polish business data from REGON, MF White List, and VIES.
-                Perfect for compliance, due diligence, and business intelligence.
+                {t('subtitle')}
               </p>
             </div>
 
             <div className="flex flex-col gap-4 sm:flex-row">
               <ButtonLink
                 size="lg"
-                href="/register"
+                href={`/${locale}/register`}
                 className="group"
                 variant="brand"
                 vibe="primary"
               >
-                Start Free Trial
+                {t('startFreeTrial')}
                 <ArrowRight className="ml-1 size-4 group-hover:translate-x-2 duration-500 transition-transform" />
                 </ButtonLink>
               <ButtonLink
@@ -107,12 +106,12 @@ export default function LandingPage() {
                 variant="outline"
                 href="/docs"
               >
-                View Documentation
+                {t('viewDocumentation')}
               </ButtonLink>
             </div>
 
             <div className="flex flex-col gap-2">
-              <p className="text-sm text-muted-foreground">Trusted by developers:</p>
+              <p className="text-sm text-muted-foreground">{common('trustedByDevelopers')}</p>
               <div className="flex items-center gap-4">
                 {benefits.slice(0, 3).map((benefit, index) => (
                   <div key={index} className="flex items-center gap-2">
@@ -144,10 +143,10 @@ export default function LandingPage() {
             className="text-center mb-16"
           >
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              Everything you need for Polish business data
+              {t('everythingYouNeed')}
             </h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Comprehensive API platform providing access to official Polish business registries
+              {t('comprehensiveApiPlatform')}
             </p>
           </motion.div>
 
@@ -189,28 +188,28 @@ export default function LandingPage() {
             className="text-center"
           >
             <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl mb-4">
-              Ready to get started?
+              {t('readyToGetStarted')}
             </h2>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join thousands of developers using our platform to access Polish business data
+              {t('joinThousandsOfDevelopers')}
             </p>
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
               <ButtonLink
                 size="lg"
-                href="/register"
+                href={`/${locale}/register`}
                 variant="brand"
                 vibe="primary"
                 className="group"
               >
-                Start Free Trial
+                {t('startFreeTrial')}
                 <ArrowRight className="ml-1 size-4 group-hover:translate-x-2 duration-500 transition-transform" />
               </ButtonLink>
               <ButtonLink
                 size="lg"
                 variant="outline"
-                href="/login"
+                href={`/${locale}/login`}
               >
-                Sign In
+                {t('signIn')}
               </ButtonLink>
             </div>
           </motion.div>

@@ -5,27 +5,31 @@ import { Button } from '@/components/ui/button'
 import { useUser } from '@/lib/hooks/useAuth'
 import { Building2, Search, CreditCard, Activity, TrendingUp, InfoIcon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { useTranslations } from 'next-intl'
 
 export default function DashboardPage() {
   const { data: user } = useUser()
+  const t = useTranslations('dashboard')
+  const common = useTranslations('common')
+  const company = useTranslations('company')
 
   const stats = [
     {
-      name: 'Companies Searched',
+      name: t('companiesSearched'),
       value: '127',
       icon: Building2,
       change: '+12%',
       changeType: 'positive' as const,
     },
     {
-      name: 'API Calls This Month',
+      name: t('apiCallsThisMonth'),
       value: '89',
       icon: Activity,
       change: '+8%',
       changeType: 'positive' as const,
     },
     {
-      name: 'Plan Usage',
+      name: t('planUsage'),
       value: user?.subscription_tier === 'free' ? '89/100' : '89/1000', // TODO: change to actual usage
       icon: TrendingUp,
       change: user?.subscription_tier === 'free' ? '89%' : '8.9%', // TODO: change to actual usage
@@ -35,23 +39,23 @@ export default function DashboardPage() {
 
   const quickActions = [
     {
-      title: 'Search Company',
-      description: 'Look up company information by NIP',
+      title: company('searchCompany'),
+      description: company('lookUpCompanyInformation'),
       icon: Search,
       href: '/dashboard/search',
       color: 'bg-blue-500',
     },
     {
-      title: 'View Companies',
-      description: 'Browse your saved companies',
+      title: t('companies'),
+      description: company('browseYourSavedCompanies'),
       icon: Building2,
       href: '/dashboard/companies',
       color: 'bg-green-500',
       disabled: true,
     },
     {
-      title: 'Upgrade Plan',
-      description: 'Get more API calls and features',
+      title: t('upgradePlan'),
+      description: t('getMoreApiCalls'),
       icon: CreditCard,
       href: '/dashboard/subscription',
       color: 'bg-purple-500',
@@ -63,9 +67,9 @@ export default function DashboardPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t('dashboard')}</h1>
         <p className="text-muted-foreground">
-          Welcome back, {user?.name ?? user?.email}. Here&apos;s what&apos;s happening with your account.
+          {t('welcomeBack')} {user?.name ?? user?.email}. {t('heresWhatHappening')}
         </p>
       </div>
 
@@ -86,10 +90,10 @@ export default function DashboardPage() {
                   ? 'text-yellow-600'
                   : 'text-red-600'
               }`}>
-                {stat.change} from last month
+                {stat.change} {common('fromLastMonth')}
               </p>
               <p className="text-xs text-muted-foreground">
-                This is a mock data.
+                {common('mockData')}
               </p>
             </CardContent>
           </Card>
@@ -98,7 +102,7 @@ export default function DashboardPage() {
 
       {/* Quick Actions */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('quickActions')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {quickActions.map((action) => (
             <Card key={action.title} className={`cursor-pointer hover:shadow-md transition-shadow ${action.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}>
@@ -115,7 +119,7 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <Button variant="outline" size="sm" asChild>
-                  <a href={action.href}>Get Started</a>
+                  <a href={action.href}>{common('getStarted')}</a>
                 </Button>
               </CardContent>
             </Card>
@@ -127,13 +131,13 @@ export default function DashboardPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            Recent Activity
+            {t('recentActivity')}
             <Badge variant="warning" className="flex items-center gap-2 text-xs">
               <InfoIcon className="size-4" />
-              Mocked data
+              {common('mockedData')}
             </Badge>
           </CardTitle>
-          <CardDescription>Your latest company searches and API calls</CardDescription>
+          <CardDescription>{t('yourLatestCompanySearches')}</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -141,31 +145,31 @@ export default function DashboardPage() {
               <div className="flex items-center space-x-3">
                 <Building2 className="size-4 text-gray-400" />
                 <div>
-                  <p className="text-sm font-medium">Searched: ABC Company Sp. z o.o.</p>
+                  <p className="text-sm font-medium">{company('searched')} ABC Company Sp. z o.o.</p>
                   <p className="text-xs text-gray-500">NIP: 1234567890</p>
                 </div>
               </div>
-              <p className="text-xs text-gray-500">2 hours ago</p>
+              <p className="text-xs text-gray-500">2 {common('hoursAgo')}</p>
             </div>
             <div className="flex items-center justify-between py-2">
               <div className="flex items-center space-x-3">
                 <Building2 className="size-4 text-gray-400" />
                 <div>
-                  <p className="text-sm font-medium">Searched: XYZ Corporation S.A.</p>
+                  <p className="text-sm font-medium">{company('searched')} XYZ Corporation S.A.</p>
                   <p className="text-xs text-gray-500">NIP: 9876543210</p>
                 </div>
               </div>
-              <p className="text-xs text-gray-500">1 day ago</p>
+              <p className="text-xs text-gray-500">1 {common('daysAgo')}</p>
             </div>
             <div className="flex items-center justify-between py-2">
               <div className="flex items-center space-x-3">
                 <Activity className="size-4 text-gray-400" />
                 <div>
-                  <p className="text-sm font-medium">API Call: Webhook updated</p>
-                  <p className="text-xs text-gray-500">dataChanged event</p>
+                  <p className="text-sm font-medium">{company('apiCall')} {company('webhookUpdated')}</p>
+                  <p className="text-xs text-gray-500">{company('dataChangedEvent')}</p>
                 </div>
               </div>
-              <p className="text-xs text-gray-500">2 days ago</p>
+              <p className="text-xs text-gray-500">2 {common('daysAgo')}</p>
             </div>
           </div>
         </CardContent>
