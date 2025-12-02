@@ -63,8 +63,11 @@ docs/
 README.md
 LICENSE
 
-# Frontend
-frontend/
+# Frontend (keep node_modules and build artifacts out)
+frontend/node_modules/
+frontend/.next/
+frontend/dist/
+frontend/out/
 
 # Tests
 tests/
