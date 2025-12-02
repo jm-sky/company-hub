@@ -6,7 +6,7 @@ echo "📊 Production Services Status"
 echo "=============================="
 echo ""
 
-docker-compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml ps
 
 echo ""
 echo "🔍 Service Health:"

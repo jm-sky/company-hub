@@ -19,18 +19,18 @@ git pull origin $(git branch --show-current)
 
 # Build and start services
 echo "🔨 Building Docker images..."
-docker-compose -f docker-compose.prod.yml build --no-cache
+docker compose -f docker-compose.prod.yml build --no-cache
 
 echo "🔄 Restarting services..."
-docker-compose -f docker-compose.prod.yml down
-docker-compose -f docker-compose.prod.yml up -d
+docker compose -f docker-compose.prod.yml down
+docker compose -f docker-compose.prod.yml up -d
 
 # Show running containers
 echo ""
 echo "✅ Deployment complete!"
 echo ""
 echo "📊 Running containers:"
-docker-compose -f docker-compose.prod.yml ps
+docker compose -f docker-compose.prod.yml ps
 
 echo ""
 echo "🔍 Service status:"
@@ -38,4 +38,4 @@ echo "  Backend API: http://localhost:${DOCKER_APP_PORT:-8000}"
 echo "  Frontend: http://localhost:${DOCKER_FRONTEND_PORT:-3000}"
 echo ""
 echo "📝 View logs with:"
-echo "  docker-compose -f docker-compose.prod.yml logs -f"
+echo "  docker compose -f docker-compose.prod.yml logs -f"
