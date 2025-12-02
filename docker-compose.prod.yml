@@ -44,7 +44,7 @@ services:
       - companyhub-network
 
   db:
-    image: postgres:17
+    image: postgres:17-alpine
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
