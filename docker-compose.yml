@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile
     ports:
-      - "${APP_PORT:-8000}:8000"
+      - "127.0.0.1:${APP_PORT:-8000}:8000"
     volumes:
       - .:/app
       - /app/__pycache__
@@ -54,14 +54,14 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
     networks:
       - companyhub-network
 
   redis:
     image: redis:8-alpine
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes
@@ -71,7 +71,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4:latest
     ports:
-      - "${PGADMIN_PORT:-8080}:80"
+      - "127.0.0.1:${PGADMIN_PORT:-8080}:80"
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-admin@companyhub.com}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD:-admin123}
@@ -85,7 +85,7 @@ services:
     environment:
       - REDIS_HOSTS=local:redis:6379
     ports:
-      - "${REDIS_COMMANDER_PORT:-8081}:8081"
+      - "127.0.0.1:${REDIS_COMMANDER_PORT:-8081}:8081"
     depends_on:
       - redis
     networks:

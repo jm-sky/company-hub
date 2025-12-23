@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: docker/Dockerfile.prod
     ports:
-      - "${DOCKER_APP_PORT:-8000}:8000"
+      - "127.0.0.1:${DOCKER_APP_PORT:-8000}:8000"
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
@@ -54,7 +54,7 @@ services:
         - NEXT_PUBLIC_RECAPTCHA_SITE_KEY=${NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
         - NEXT_PUBLIC_RECAPTCHA_ENABLED=${NEXT_PUBLIC_RECAPTCHA_ENABLED}
     ports:
-      - "${DOCKER_FRONTEND_PORT:-3000}:3000"
+      - "127.0.0.1:${DOCKER_FRONTEND_PORT:-3000}:3000"
     restart: unless-stopped
     networks:
       - companyhub-network
