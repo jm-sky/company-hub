@@ -8,7 +8,6 @@ export const useAuth = () => {
     mutationFn: ({ email, password, recaptchaToken }: { email: string; password: string; recaptchaToken?: string | null }) =>
       apiClient.login(email, password, recaptchaToken),
     onSuccess: (data) => {
-      apiClient.setAuth(data.data.token);
       queryClient.setQueryData(['user'], data.data.user);
     },
   });
@@ -17,7 +16,6 @@ export const useAuth = () => {
     mutationFn: ({ email, password, name, recaptchaToken }: { email: string; password: string; name: string; recaptchaToken?: string | null }) =>
       apiClient.register(email, password, name, recaptchaToken),
     onSuccess: (data) => {
-      apiClient.setAuth(data.data.token);
       queryClient.setQueryData(['user'], data.data.user);
     },
   });
@@ -36,9 +34,12 @@ export const useAuth = () => {
       apiClient.changePassword(currentPassword, newPassword),
   });
 
-  const logout = () => {
-    apiClient.clearAuth();
-    queryClient.clear();
+  const logout = async () => {
+    try {
+      await apiClient.logout();
+    } finally {
+      queryClient.clear();
+    }
   };
 
   return {
@@ -58,7 +59,10 @@ export const useUser = () => {
       const response = await apiClient.getProfile();
       return response.data;
     },
-    enabled: typeof window !== 'undefined' && !!localStorage.getItem('auth_token'),
+    // The session lives in an httpOnly cookie invisible to JS, so we can't
+    // pre-check for it client-side; the query itself (401 -> error) is the
+    // source of truth for whether the user is authenticated.
+    retry: false,
     staleTime: 15 * 60 * 1000, // 15 minutes - consider data fresh for 15 minutes
     gcTime: 30 * 60 * 1000, // 30 minutes - keep in cache for 30 minutes
     refetchOnWindowFocus: false, // Don't refetch when window gains focus

@@ -17,65 +17,39 @@ import {
 
 class ApiClient {
   private client: AxiosInstance;
-  private authToken: string | null = null;
 
   constructor(baseURL: string = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000') {
     this.client = axios.create({
       baseURL,
       timeout: 10000,
+      // The session token lives in an httpOnly cookie set by the backend;
+      // this makes the browser send/accept it on cross-origin requests.
+      withCredentials: true,
       headers: {
         'Content-Type': 'application/json',
       },
     });
-
-    // Request interceptor to add auth token
-    this.client.interceptors.request.use(
-      (config) => {
-        if (!this.authToken) {
-          this.loadAuthFromStorage();
-        }
-        if (this.authToken) {
-          config.headers.Authorization = `Bearer ${this.authToken}`;
-        }
-        return config;
-      },
-      (error) => Promise.reject(error)
-    );
 
     // Response interceptor for error handling
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
         if (error.response?.status === HttpStatusCode.Unauthorized) {
-          // Don't redirect if this is a login/register request (expected 401)
-          const isAuthRequest = error.config?.url?.includes('/auth/login') ||
-                               error.config?.url?.includes('/auth/register');
+          // Don't hard-redirect for expected 401s: login/register (invalid
+          // credentials) and /auth/me (the session cookie is httpOnly, so
+          // the frontend has no way to know it's logged in without asking -
+          // a 401 here just means "not logged in", not "session expired").
+          const isExpectedUnauthorized = error.config?.url?.includes('/auth/login') ||
+                               error.config?.url?.includes('/auth/register') ||
+                               error.config?.url?.includes('/auth/me');
 
-          if (!isAuthRequest) {
-            this.clearAuth();
+          if (!isExpectedUnauthorized) {
             window.location.href = '/login?reason=session-expired';
           }
         }
         return Promise.reject(error);
       }
     );
-  }
-
-  setAuth(token: string) {
-    this.authToken = token;
-    localStorage.setItem('auth_token', token);
-  }
-
-  clearAuth() {
-    this.authToken = null;
-    localStorage.removeItem('auth_token');
-  }
-
-  loadAuthFromStorage() {
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      this.authToken = token;
-    }
   }
 
   // Authentication endpoints
@@ -112,6 +86,11 @@ class ApiClient {
       current_password: currentPassword,
       new_password: newPassword
     });
+    return response.data;
+  }
+
+  async logout(): Promise<ApiResponse> {
+    const response = await this.client.post('/api/v1/auth/logout');
     return response.data;
   }
 

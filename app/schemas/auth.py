@@ -24,7 +24,8 @@ class UserResponse(BaseModel):
         from_attributes = True
 
 class LoginResponseData(BaseModel):
-    token: str
+    # The JWT itself is never returned in the body - it's set as an httpOnly
+    # cookie so client-side JS (including any XSS payload) cannot read it.
     user: UserResponse
 
 class LoginResponse(ApiResponse):
@@ -37,7 +38,6 @@ class RegisterRequest(BaseModel):
     recaptcha_token: Optional[str] = None
 
 class RegisterResponseData(BaseModel):
-    token: str
     user: UserResponse
 
 class RegisterResponse(ApiResponse):
@@ -45,6 +45,9 @@ class RegisterResponse(ApiResponse):
 
 class UserProfileResponse(ApiResponse):
     data: UserResponse
+
+class LogoutResponse(ApiResponse):
+    data: None = None
 
 # OAuth-specific schemas
 class OAuthCallbackRequest(BaseModel):

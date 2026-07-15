@@ -52,9 +52,7 @@ export const useOAuthCallback = () => {
     },
     onSuccess: (data) => {
       if (data.success && data.data) {
-        // Set authentication token
-        apiClient.setAuth(data.data.token);
-        
+        // Session cookie is already set by the backend response.
         // Update user data in cache
         queryClient.setQueryData(['user'], data.data.user);
         

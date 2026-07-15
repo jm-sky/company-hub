@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
@@ -20,7 +20,6 @@ import { useRecaptcha } from '@/lib/hooks/useRecaptcha';
 export function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const [sessionExpiredMessage, setSessionExpiredMessage] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
@@ -43,30 +42,30 @@ export function LoginContent() {
     // Redirect authenticated users to dashboard
     if (!isLoading && user) {
       router.push('/dashboard');
-      return;
     }
+  }, [user, isLoading, router]);
 
+  const sessionExpiredMessage = useMemo(() => {
     const reason = searchParams.get('reason');
     const error = searchParams.get('error');
-    
+
     if (reason === 'session-expired') {
-      setSessionExpiredMessage('Your session has expired. Please log in again.');
-    } else if (error) {
+      return 'Your session has expired. Please log in again.';
+    }
+    if (error) {
       switch (error) {
         case 'oauth-denied':
-          setSessionExpiredMessage('OAuth authentication was cancelled.');
-          break;
+          return 'OAuth authentication was cancelled.';
         case 'oauth-failed':
-          setSessionExpiredMessage('OAuth authentication failed. Please try again.');
-          break;
+          return 'OAuth authentication failed. Please try again.';
         case 'oauth-invalid':
-          setSessionExpiredMessage('Invalid OAuth parameters. Please try again.');
-          break;
+          return 'Invalid OAuth parameters. Please try again.';
         default:
-          setSessionExpiredMessage('An error occurred. Please try again.');
+          return 'An error occurred. Please try again.';
       }
     }
-  }, [searchParams, user, isLoading, router]);
+    return null;
+  }, [searchParams]);
 
   const onSubmit = async (data: LoginFormData) => {
     try {

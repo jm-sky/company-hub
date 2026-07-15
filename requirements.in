@@ -1,0 +1,14 @@
+fastapi>=0.139.0
+uvicorn>=0.51.0
+sqlalchemy>=2.0.51
+alembic>=1.18.5
+psycopg2-binary>=2.9.12
+redis>=8.0.1
+slowapi>=0.1.10
+pydantic>=2.13.4
+PyJWT>=2.13.0
+bcrypt>=4.1.0
+cryptography>=44.0.0
+httpx>=0.28.1
+python-multipart>=0.0.32
+pydantic-settings>=2.14.2

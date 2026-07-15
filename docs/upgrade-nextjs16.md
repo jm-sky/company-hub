@@ -527,6 +527,15 @@ Plan zaktualizowany na podstawie oficjalnej dokumentacji Next.js 16:
 
 - [ ] Nie rozpoczęto
 - [ ] W trakcie
-- [ ] Zakończono
+- [x] Zakończono
 - [ ] Problemy wymagają rozwiązania
+
+Zaktualizowano w ramach przeglądu bezpieczeństwa (2026-07-15) po potwierdzonym exploicie
+CVE-2025-55182 / CVE-2025-66478 ("React2Shell") wykorzystywanym do instalacji cryptominerów
+na wersjach Next.js 15.0.0–16.0.6. Projekt był przypięty do `next@15.3.5`, w zasięgu podatności.
+Zastosowane kroki: bump do `next@16.2.10` + `eslint-config-next@16.2.10`, `middleware.ts` →
+`proxy.ts`, `next lint` → `eslint .` z natywnym flat configiem z `eslint-config-next`, naprawa
+dwóch `react-hooks/set-state-in-effect` w `login-content.tsx` i `reset-password-content.tsx`
+wykrytych przez zaktualizowany linter. Async Request APIs, parallel routes i `next/image` nie
+wymagały zmian (kod już był zgodny / nieużywany). Build, lint i type-check przechodzą czysto.
 
