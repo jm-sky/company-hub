@@ -93,7 +93,8 @@ export interface RegisterRequest {
 }
 
 export interface AuthResponse {
-  token: string;
+  // The session token is set as an httpOnly cookie by the backend and is
+  // never present in the response body.
   user: User;
 }
 

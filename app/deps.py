@@ -1,16 +1,19 @@
 """FastAPI dependencies."""
 
-from typing import Generator
-from fastapi import Depends, HTTPException, status
+from typing import Generator, Optional
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
 from app.db.database import SessionLocal
 from app.db.models import User
 from app.crud.users import get_user_by_id
+from app.utils.cookies import ACCESS_TOKEN_COOKIE_NAME
 from app.utils.security import verify_token
 
-security = HTTPBearer()
+# auto_error=False: the session cookie is the primary credential; a missing
+# Authorization header should not short-circuit before we've checked the cookie.
+security = HTTPBearer(auto_error=False)
 
 
 def get_db() -> Generator[Session, None, None]:
@@ -23,11 +26,23 @@ def get_db() -> Generator[Session, None, None]:
 
 
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    request: Request,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
     db: Session = Depends(get_db)
 ) -> User:
-    """Get current authenticated user."""
-    token = credentials.credentials
+    """Get current authenticated user from the session cookie, or an Authorization
+    Bearer header as a fallback for non-browser API clients."""
+    token = request.cookies.get(ACCESS_TOKEN_COOKIE_NAME) or (
+        credentials.credentials if credentials else None
+    )
+
+    if token is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
     payload = verify_token(token)
 
     if payload is None:

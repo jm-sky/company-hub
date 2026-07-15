@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Response
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 
@@ -6,6 +6,7 @@ from app.schemas.auth import (
     LoginRequest,
     LoginResponse,
     LoginResponseData,
+    LogoutResponse,
     RegisterRequest,
     RegisterResponse,
     RegisterResponseData,
@@ -19,6 +20,7 @@ from app.schemas.auth import (
 from app.deps import get_db, get_current_active_user
 from app.crud.users import authenticate_user, create_user, get_user_by_email, create_oauth_user, get_oauth_user
 from app.utils.security import create_access_token
+from app.utils.cookies import set_access_token_cookie, clear_access_token_cookie
 from app.security.oauth import oauth_service
 from app.middleware.recaptcha import verify_recaptcha_token
 
@@ -29,6 +31,7 @@ router = APIRouter()
 async def login(
     request: LoginRequest,
     http_request: Request,
+    response: Response,
     db: Session = Depends(get_db)
 ):
     """
@@ -59,6 +62,7 @@ async def login(
 
     # Create access token
     access_token = create_access_token(data={"sub": str(user.id)})
+    set_access_token_cookie(response, access_token)
 
     user_response = UserResponse(
         id=user.id, # type: ignore
@@ -74,7 +78,7 @@ async def login(
     )
 
     return LoginResponse(
-        data=LoginResponseData(token=access_token, user=user_response),
+        data=LoginResponseData(user=user_response),
         success=True
     )
 
@@ -83,6 +87,7 @@ async def login(
 async def register(
     request: RegisterRequest,
     http_request: Request,
+    response: Response,
     db: Session = Depends(get_db)
 ):
     """
@@ -122,6 +127,7 @@ async def register(
 
     # Create access token
     access_token = create_access_token(data={"sub": str(user.id)})
+    set_access_token_cookie(response, access_token)
 
     user_response = UserResponse(
         id=user.id, # type: ignore
@@ -137,7 +143,7 @@ async def register(
     )
 
     return RegisterResponse(
-        data=RegisterResponseData(token=access_token, user=user_response),
+        data=RegisterResponseData(user=user_response),
         success=True
     )
 
@@ -162,6 +168,13 @@ async def get_current_user_info(current_user=Depends(get_current_active_user)):
         data=user_data,
         success=True
     )
+
+
+@router.post("/logout", response_model=LogoutResponse)
+async def logout(response: Response):
+    """Log out the current user by clearing the session cookie."""
+    clear_access_token_cookie(response)
+    return LogoutResponse(data=None, success=True)
 
 
 @router.post("/oauth/auth-url", response_model=OAuthAuthUrlResponse)
@@ -191,6 +204,7 @@ async def oauth_callback(
     provider: str,
     request: OAuthCallbackRequest,
     http_request: Request,
+    response: Response,
     db: Session = Depends(get_db)
 ):
     """
@@ -239,6 +253,7 @@ async def oauth_callback(
 
         # Create JWT token
         access_token = create_access_token(data={"sub": str(user.id)})
+        set_access_token_cookie(response, access_token)
 
         user_response = UserResponse(
             id=user.id,
@@ -254,7 +269,7 @@ async def oauth_callback(
         )
 
         return OAuthCallbackResponse(
-            data=LoginResponseData(token=access_token, user=user_response),
+            data=LoginResponseData(user=user_response),
             success=True
         )
 
