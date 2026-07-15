@@ -8,7 +8,9 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
+      - ENVIRONMENT=production
       - SECRET_KEY=${SECRET_KEY}
+      - OAUTH_TOKEN_ENCRYPTION_KEY=${OAUTH_TOKEN_ENCRYPTION_KEY}
       - CORS_ORIGINS=${CORS_ORIGINS}
       - REGON_API_KEY=${REGON_API_KEY}
       - IBAN_API_KEY=${IBAN_API_KEY}

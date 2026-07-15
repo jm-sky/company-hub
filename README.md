@@ -58,6 +58,15 @@
    pip install -r requirements.txt
    ```
 
+   `requirements.txt` and `requirements-prod.txt` are fully pinned lock files generated
+   with [pip-tools](https://github.com/jazzband/pip-tools) from `requirements.in` /
+   `requirements-prod.in`. To update dependencies, edit the `.in` file and regenerate:
+   ```bash
+   pip install pip-tools
+   pip-compile requirements.in --output-file=requirements.txt --strip-extras
+   pip-compile requirements-prod.in --output-file=requirements-prod.txt --strip-extras
+   ```
+
 3. **Set up environment**
    ```bash
    cp .env.example .env

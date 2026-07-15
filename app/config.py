@@ -2,6 +2,9 @@ from pydantic_settings import BaseSettings
 import secrets
 
 class Settings(BaseSettings):
+    # Environment
+    environment: str = "development"
+
     # Database
     database_url: str = "postgresql://user:password@localhost/companyhub"
 
@@ -12,6 +15,9 @@ class Settings(BaseSettings):
     secret_key: str = secrets.token_urlsafe(32)
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
+    # Fernet key for encrypting OAuth access/refresh tokens at rest. Required
+    # before any OAuth login can succeed; generate with Fernet.generate_key().
+    oauth_token_encryption_key: str = ""
 
     # REGON API
     regon_api_url: str = "https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc"

@@ -3,7 +3,7 @@
 from typing import Optional
 from sqlalchemy.orm import Session
 from app.db.models import User
-from app.utils.security import hash_password, verify_password
+from app.utils.security import hash_password, verify_password, encrypt_oauth_token
 from app.security.oauth import OAuthUserInfo
 
 
@@ -86,8 +86,8 @@ def create_oauth_user(db: Session, oauth_info: OAuthUserInfo, access_token: str,
             existing_user.google_email = oauth_info.email
         
         existing_user.oauth_provider = oauth_info.provider
-        existing_user.oauth_access_token = access_token
-        existing_user.oauth_refresh_token = refresh_token
+        existing_user.oauth_access_token = encrypt_oauth_token(access_token)
+        existing_user.oauth_refresh_token = encrypt_oauth_token(refresh_token)
         existing_user.avatar_url = oauth_info.avatar_url
         if oauth_info.name and not existing_user.name:
             existing_user.name = oauth_info.name
@@ -104,8 +104,8 @@ def create_oauth_user(db: Session, oauth_info: OAuthUserInfo, access_token: str,
         "plan": "free",
         "is_active": True,
         "oauth_provider": oauth_info.provider,
-        "oauth_access_token": access_token,
-        "oauth_refresh_token": refresh_token,
+        "oauth_access_token": encrypt_oauth_token(access_token),
+        "oauth_refresh_token": encrypt_oauth_token(refresh_token),
         "avatar_url": oauth_info.avatar_url,
     }
     

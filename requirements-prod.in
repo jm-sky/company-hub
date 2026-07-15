@@ -1,0 +1,11 @@
+-r requirements.in
+
+# Production server
+gunicorn>=26.0.0
+
+# Monitoring
+prometheus-client>=0.25.0
+prometheus-fastapi-instrumentator>=8.0.2
+
+# Logging
+structlog>=26.1.0

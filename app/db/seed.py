@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Database seeding script for CompanyHub."""
 
+import secrets
 import sys
 import os
 from datetime import datetime, timezone
@@ -55,11 +56,12 @@ def seed_admin_user(db: Session) -> None:
         print(f"   Password: {settings.admin_password}")
         print("   Plan: enterprise")
 
-        # Create an admin API token
+        # Create an admin API token with a randomly generated secret
+        admin_token_value = secrets.token_urlsafe(32)
         admin_token = ApiToken(
             user_id=admin_user.id,
             token_name="Admin Token",
-            token_hash=hash_password("admin-token-123"),
+            token_hash=hash_password(admin_token_value),
             permissions={"all": True},
             rate_limit_per_hour=10000,
             is_active=True,
@@ -69,6 +71,7 @@ def seed_admin_user(db: Session) -> None:
         db.add(admin_token)
         db.commit()
         print("✅ Admin API token created!")
+        print(f"   Token (save this now, it will not be shown again): {admin_token_value}")
 
     except IntegrityError as e:
         db.rollback()
@@ -152,6 +155,12 @@ def seed_test_user(db: Session) -> None:
 
 def main():
     """Main seeding function."""
+    if settings.environment == "production" and "--force" not in sys.argv:
+        print("❌ Refusing to seed a production environment (settings.environment=production).")
+        print("   This script creates a plaintext test user and prints credentials to stdout.")
+        print("   Pass --force if you really intend to run this against production.")
+        sys.exit(1)
+
     print("🌱 Starting database seeding...")
 
     # Create database session

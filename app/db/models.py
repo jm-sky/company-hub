@@ -7,6 +7,7 @@ from sqlalchemy import (
     Text,
     ForeignKey,
     ARRAY,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
@@ -100,7 +101,7 @@ class RegonData(Base):
     data = Column(JSONB, nullable=False)
     fetched_at = Column(DateTime(timezone=True), server_default=func.now())
     expires_at = Column(
-        DateTime(timezone=True), server_default=func.now() + func.interval("1 day")
+        DateTime(timezone=True), server_default=text("now() + interval '1 day'")
     )
 
     # Relationships
@@ -119,7 +120,7 @@ class MfData(Base):
     data = Column(JSONB, nullable=False)
     fetched_at = Column(DateTime(timezone=True), server_default=func.now())
     expires_at = Column(
-        DateTime(timezone=True), server_default=func.now() + func.interval("1 day")
+        DateTime(timezone=True), server_default=text("now() + interval '1 day'")
     )
 
     # Relationships
@@ -137,7 +138,7 @@ class ViesData(Base):
     consultation_number = Column(String(100))
     fetched_at = Column(DateTime(timezone=True), server_default=func.now())
     expires_at = Column(
-        DateTime(timezone=True), server_default=func.now() + func.interval("1 day")
+        DateTime(timezone=True), server_default=text("now() + interval '1 day'")
     )
 
     # Relationships
@@ -182,7 +183,7 @@ class IbanEnrichment(Base):
     enrichment_data = Column(JSONB)
     fetched_at = Column(DateTime(timezone=True), server_default=func.now())
     expires_at = Column(
-        DateTime(timezone=True), server_default=func.now() + func.interval("7 days")
+        DateTime(timezone=True), server_default=text("now() + interval '7 days'")
     )
 
     # Relationships

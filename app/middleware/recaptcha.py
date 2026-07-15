@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status, Request
-from typing import Optional, Callable
+from typing import Optional
 from app.security.recaptcha import recaptcha_service
 from app.config import settings
 import logging
@@ -60,36 +60,3 @@ async def verify_recaptcha_token(
     
     logger.info(f"reCAPTCHA verification successful for IP {remote_ip}")
     return True
-
-def create_recaptcha_dependency(
-    min_score: float = 0.5,
-    action: Optional[str] = None
-):
-    """
-    Factory function to create reCAPTCHA dependency with custom parameters
-    
-    Args:
-        min_score: Minimum score threshold for reCAPTCHA v3
-        action: Expected action name for verification
-    
-    Returns:
-        FastAPI dependency function
-    """
-    async def dependency(request: Request) -> bool:
-        return await verify_recaptcha_dependency(
-            request=request,
-            min_score=min_score,
-            action=action
-        )
-    
-    return dependency
-
-# Pre-configured dependencies for different security levels
-verify_recaptcha_high = create_recaptcha_dependency(min_score=0.8, action="high_security")
-verify_recaptcha_medium = create_recaptcha_dependency(min_score=0.5, action="medium_security")
-verify_recaptcha_low = create_recaptcha_dependency(min_score=0.3, action="low_security")
-
-# Specific action dependencies
-verify_recaptcha_register = create_recaptcha_dependency(min_score=0.7, action="register")
-verify_recaptcha_login = create_recaptcha_dependency(min_score=0.5, action="login")
-verify_recaptcha_search = create_recaptcha_dependency(min_score=0.4, action="search")

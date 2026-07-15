@@ -11,7 +11,9 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL:-postgresql://companyhub:password@db:5432/companyhub}
       - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+      - ENVIRONMENT=${ENVIRONMENT:-development}
       - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-in-production}
+      - OAUTH_TOKEN_ENCRYPTION_KEY=${OAUTH_TOKEN_ENCRYPTION_KEY:-dBFZobi_n_CsKdG4qdrFrp2jJnuDPhUPfS62sM1WIJE=}
       - REGON_API_KEY=${REGON_API_KEY:-}
       - IBAN_API_KEY=${IBAN_API_KEY:-}
       - REGON_API_URL=${REGON_API_URL:-https://wyszukiwarkaregon.stat.gov.pl/wsBIR/UslugaBIRzewnPubl.svc}
@@ -69,7 +71,7 @@ services:
       - companyhub-network
 
   pgadmin:
-    image: dpage/pgadmin4:latest
+    image: dpage/pgadmin4:9.16@sha256:40fa840c5bb7c8463957f1255b01283732c2d8c9396a956d180f8e6c296753b3
     ports:
       - "127.0.0.1:${PGADMIN_PORT:-8080}:80"
     environment:
@@ -81,7 +83,7 @@ services:
       - companyhub-network
 
   redis-commander:
-    image: rediscommander/redis-commander:latest
+    image: rediscommander/redis-commander:latest@sha256:19cd0c49f418779fa2822a0496c5e6516d0c792effc39ed20089e6268477e40a
     environment:
       - REDIS_HOSTS=local:redis:6379
     ports:

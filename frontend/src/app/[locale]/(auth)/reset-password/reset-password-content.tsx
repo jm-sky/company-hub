@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
@@ -18,9 +18,9 @@ import { resetPasswordSchema, ResetPasswordFormData } from '@/lib/schemas/auth';
 export function ResetPasswordContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [token, setToken] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const token = searchParams.get('token');
   const { resetPassword } = useAuth();
 
   const {
@@ -30,13 +30,6 @@ export function ResetPasswordContent() {
   } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
   });
-
-  useEffect(() => {
-    const tokenParam = searchParams.get('token');
-    if (tokenParam) {
-      setToken(tokenParam);
-    }
-  }, [searchParams]);
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     if (!token) return;

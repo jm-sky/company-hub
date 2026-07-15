@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta, timezone
+from functools import lru_cache
 from typing import Optional
 import bcrypt
-from jose import jwt, exceptions
+import jwt
+from cryptography.fernet import Fernet
 from app.config import settings
 
 
@@ -34,5 +36,29 @@ def verify_token(token: str) -> Optional[dict]:
     try:
         payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
         return payload
-    except exceptions.JWTError:
+    except jwt.PyJWTError:
         return None
+
+
+@lru_cache(maxsize=1)
+def _get_oauth_token_fernet() -> Fernet:
+    if not settings.oauth_token_encryption_key:
+        raise RuntimeError(
+            "OAUTH_TOKEN_ENCRYPTION_KEY is not configured. "
+            "Generate one with `python -c \"from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())\"`."
+        )
+    return Fernet(settings.oauth_token_encryption_key.encode())
+
+
+def encrypt_oauth_token(token: Optional[str]) -> Optional[str]:
+    """Encrypt an OAuth access/refresh token before persisting it."""
+    if token is None:
+        return None
+    return _get_oauth_token_fernet().encrypt(token.encode('utf-8')).decode('utf-8')
+
+
+def decrypt_oauth_token(token: Optional[str]) -> Optional[str]:
+    """Decrypt a previously-encrypted OAuth access/refresh token."""
+    if token is None:
+        return None
+    return _get_oauth_token_fernet().decrypt(token.encode('utf-8')).decode('utf-8')

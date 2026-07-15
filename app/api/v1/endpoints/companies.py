@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException, Query, Depends
+from fastapi import APIRouter, HTTPException, Query, Depends, Request
 from typing import Optional, List
 from sqlalchemy.orm import Session
+from app.middleware.rate_limit import limiter, anonymous_company_lookup_limit
 from app.schemas.company import (
     ErrorResponse,
     CompanyDataResponse,
@@ -29,7 +30,9 @@ router = APIRouter()
 
 
 @router.get("/{nip}", response_model=ApiResponse)
+@limiter.limit(anonymous_company_lookup_limit)
 async def get_company_data(
+    request: Request,
     nip: str,
     refresh: Optional[str] = Query(
         None, description="Comma-separated list of providers to refresh (regon,mf,vies)"

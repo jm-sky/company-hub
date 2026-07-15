@@ -1,0 +1,38 @@
+name: Dependency Audit
+
+on:
+  pull_request:
+    paths:
+      - "requirements*.txt"
+      - "frontend/package.json"
+      - "frontend/pnpm-lock.yaml"
+      - ".github/workflows/dependency-audit.yml"
+  push:
+    branches: [main]
+    paths:
+      - "requirements*.txt"
+      - "frontend/package.json"
+      - "frontend/pnpm-lock.yaml"
+
+jobs:
+  pip-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pip-audit
+      - run: pip-audit -r requirements.txt -r requirements-prod.txt
+
+  # `pnpm audit` / `npm audit` depend on an npm registry endpoint that has
+  # been retired (410 Gone as of this writing), so we scan the lockfile
+  # with osv-scanner (Google's OSV database) instead.
+  frontend-osv-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google/osv-scanner-action/osv-scanner-action@v2
+        with:
+          scan-args: |-
+            --lockfile=frontend/pnpm-lock.yaml
