@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from 'next-intl/plugin';
+import { withSerwist } from '@serwist/turbopack';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
@@ -13,6 +14,7 @@ const contentSecurityPolicy = [
   `connect-src 'self' ${apiUrl} https://www.google.com`,
   "frame-src https://www.google.com",
   "font-src 'self' data:",
+  "worker-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -37,4 +39,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+export default withSerwist(withNextIntl(nextConfig));

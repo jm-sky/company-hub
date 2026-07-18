@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "generate-icons": "node scripts/generate-icons.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
@@ -41,12 +42,16 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@serwist/turbopack": "^9.5.11",
     "@tailwindcss/postcss": "^4.3.2",
     "@types/node": "^20",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "esbuild": "^0.28.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
+    "serwist": "^9.5.11",
+    "sharp": "^0.35.3",
     "tailwindcss": "^4.3.2",
     "tw-animate-css": "^1.3.5",
     "typescript": "^5"
