@@ -8,6 +8,7 @@ import {
   Hourglass,
 } from "lucide-react"
 import { useRouter } from 'next/navigation'
+import { useLocale } from 'next-intl'
 
 import { API_DOCS_URL } from '@/config/app'
 import {
@@ -31,10 +32,11 @@ export default function UserMenu() {
   const { data: user } = useUser()
   const { logout } = useAuth()
   const router = useRouter()
+  const locale = useLocale()
 
   const handleLogout = async () => {
     await logout()
-    router.push('/login')
+    router.push(`/${locale}/login`)
   }
 
   const getInitials = (email: string) => {

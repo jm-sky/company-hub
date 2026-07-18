@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useRouter } from 'next/navigation'
+import { useTranslations, useLocale } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useAuth, useUser } from '@/lib/hooks/useAuth'
@@ -25,25 +26,27 @@ interface DashboardLayoutProps {
   children: React.ReactNode
 }
 
-const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: Home, disabled: false },
-  { name: 'Company Search', href: '/dashboard/search', icon: Search, disabled: false },
-  { name: 'Companies', href: '/dashboard/companies', icon: Building2, disabled: true },
-  { name: 'Subscription', href: '/dashboard/subscription', icon: CreditCard, disabled: true },
-  { name: 'Webhooks', href: '/dashboard/webhooks', icon: Webhook, disabled: true },
-  { name: 'Settings', href: '/dashboard/settings', icon: Settings, disabled: true },
-]
-
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const { data: user } = useUser()
   const { logout } = useAuth()
   const router = useRouter()
   const pathname = usePathname()
+  const locale = useLocale()
+  const t = useTranslations('navigation')
+
+  const navigation = [
+    { name: t('dashboard'), href: `/${locale}/dashboard`, icon: Home, disabled: false },
+    { name: t('search'), href: `/${locale}/dashboard/search`, icon: Search, disabled: false },
+    { name: t('companies'), href: `/${locale}/dashboard/companies`, icon: Building2, disabled: true },
+    { name: t('subscription'), href: `/${locale}/dashboard/subscription`, icon: CreditCard, disabled: true },
+    { name: t('webhooks'), href: `/${locale}/dashboard/webhooks`, icon: Webhook, disabled: true },
+    { name: t('settings'), href: `/${locale}/dashboard/settings`, icon: Settings, disabled: true },
+  ]
 
   const handleLogout = async () => {
     await logout()
-    router.push('/login')
+    router.push(`/${locale}/login`)
   }
 
   return (
@@ -94,7 +97,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               className="mt-3 w-full justify-start"
             >
               <LogOut className="mr-2 size-4" />
-              Sign out
+              {t('logout')}
             </Button>
           </div>
         </div>
@@ -128,7 +131,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               className="w-full justify-start"
             >
               <LogOut className="mr-2 size-4" />
-              Sign out
+              {t('logout')}
             </Button>
           </div>
         </div>

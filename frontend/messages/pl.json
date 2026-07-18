@@ -108,7 +108,14 @@
     "enterEmailForResetLink": "Wprowadź swój adres email, a wyślemy Ci link do resetowania hasła",
     "sending": "Wysyłanie...",
     "sendResetLink": "Wyślij link resetujący",
-    "failedToSendResetLink": "Nie udało się wysłać linku resetującego. Spróbuj ponownie."
+    "failedToSendResetLink": "Nie udało się wysłać linku resetującego. Spróbuj ponownie.",
+    "authenticationError": "Błąd uwierzytelniania",
+    "oauthCancelledOrFailed": "Logowanie OAuth zostało anulowane lub nie powiodło się. Przekierowywanie do logowania...",
+    "authenticationFailed": "Uwierzytelnianie nie powiodło się",
+    "errorDuringAuthentication": "Wystąpił błąd podczas uwierzytelniania.",
+    "redirectingToLoginPage": "Przekierowywanie do strony logowania...",
+    "signingYouIn": "Logowanie...",
+    "processingProviderAuthentication": "Przetwarzanie uwierzytelniania przez {provider}. Proszę czekać..."
   },
   "company": {
     "search": "Szukaj firm",

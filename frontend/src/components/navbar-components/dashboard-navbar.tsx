@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 
 // import SettingsMenu from "@/components/navbar-components/settings-menu"
 import UserMenu from "@/components/navbar-components/user-menu"
@@ -22,14 +22,15 @@ interface DashboardNavbarProps {
 
 export default function DashboardNavbar({ onMobileMenuClick }: DashboardNavbarProps) {
   const pathname = usePathname()
+  const locale = useLocale()
   const t = useTranslations('navigation')
 
   // Navigation links array to be used in both desktop and mobile menus
   const navigationLinks: NavigationLink[] = [
-    { href: "/dashboard", label: t('dashboard'), disabled: false },
-    { href: "/dashboard/search", label: t('search'), disabled: false },
-    { href: "/dashboard/companies", label: t('companies'), disabled: true },
-    { href: "/dashboard/webhooks", label: t('webhooks'), disabled: true },
+    { href: `/${locale}/dashboard`, label: t('dashboard'), disabled: false },
+    { href: `/${locale}/dashboard/search`, label: t('search'), disabled: false },
+    { href: `/${locale}/dashboard/companies`, label: t('companies'), disabled: true },
+    { href: `/${locale}/dashboard/webhooks`, label: t('webhooks'), disabled: true },
   ]
 
   return (

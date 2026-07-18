@@ -108,7 +108,14 @@
     "enterEmailForResetLink": "Enter your email address and we'll send you a link to reset your password",
     "sending": "Sending...",
     "sendResetLink": "Send reset link",
-    "failedToSendResetLink": "Failed to send reset link. Please try again."
+    "failedToSendResetLink": "Failed to send reset link. Please try again.",
+    "authenticationError": "Authentication Error",
+    "oauthCancelledOrFailed": "OAuth authentication was cancelled or failed. Redirecting to login...",
+    "authenticationFailed": "Authentication Failed",
+    "errorDuringAuthentication": "An error occurred during authentication.",
+    "redirectingToLoginPage": "Redirecting to login page...",
+    "signingYouIn": "Signing you in...",
+    "processingProviderAuthentication": "Processing your {provider} authentication. Please wait..."
   },
   "company": {
     "search": "Search Companies",

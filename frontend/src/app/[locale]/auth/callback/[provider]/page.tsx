@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { useSearchParams, useParams, useRouter } from 'next/navigation';
+import { useTranslations, useLocale } from 'next-intl';
 import { useOAuthCallback } from '@/lib/hooks/useOAuth';
 import { useRecaptcha } from '@/lib/hooks/useRecaptcha';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,6 +12,8 @@ export default function OAuthCallbackPage() {
   const searchParams = useSearchParams();
   const params = useParams();
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations('auth');
   const oauthCallback = useOAuthCallback();
   const { getToken: getRecaptchaToken, isEnabled: recaptchaEnabled, isReady: recaptchaReady } = useRecaptcha();
   const processingRef = useRef(false);
@@ -31,19 +34,19 @@ export default function OAuthCallbackPage() {
       try {
         // Handle OAuth error (user denied)
         if (error) {
-          router.push('/login?error=oauth-denied');
+          router.push(`/${locale}/login?error=oauth-denied`);
           return;
         }
 
         // Validate required parameters
         if (!provider || !code || !state) {
-          router.push('/login?error=oauth-invalid');
+          router.push(`/${locale}/login?error=oauth-invalid`);
           return;
         }
 
         // Validate provider
         if (!['github', 'google'].includes(provider)) {
-          router.push('/login?error=oauth-invalid');
+          router.push(`/${locale}/login?error=oauth-invalid`);
           return;
         }
 
@@ -58,23 +61,23 @@ export default function OAuthCallbackPage() {
         oauthCallback.mutate({ provider, code, state, recaptchaToken });
       } catch {
         processingRef.current = false; // Reset flag on error
-        router.push('/login?error=oauth-failed');
+        router.push(`/${locale}/login?error=oauth-failed`);
       }
     };
-    
+
     processCallback();
-  }, [provider, code, state, error, router, oauthCallback, recaptchaEnabled, recaptchaReady, getRecaptchaToken]);
+  }, [provider, code, state, error, router, locale, oauthCallback, recaptchaEnabled, recaptchaReady, getRecaptchaToken]);
 
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Card className="w-96">
           <CardHeader>
-            <CardTitle className="text-destructive">Authentication Error</CardTitle>
+            <CardTitle className="text-destructive">{t('authenticationError')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              OAuth authentication was cancelled or failed. Redirecting to login...
+              {t('oauthCancelledOrFailed')}
             </p>
           </CardContent>
         </Card>
@@ -87,14 +90,14 @@ export default function OAuthCallbackPage() {
       <div className="min-h-screen flex items-center justify-center">
         <Card className="w-96">
           <CardHeader>
-            <CardTitle className="text-destructive">Authentication Failed</CardTitle>
+            <CardTitle className="text-destructive">{t('authenticationFailed')}</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-4">
-              {oauthCallback.error.message || 'An error occurred during authentication.'}
+              {oauthCallback.error.message || t('errorDuringAuthentication')}
             </p>
             <p className="text-xs text-muted-foreground">
-              Redirecting to login page...
+              {t('redirectingToLoginPage')}
             </p>
           </CardContent>
         </Card>
@@ -108,12 +111,12 @@ export default function OAuthCallbackPage() {
         <CardHeader>
           <CardTitle className="flex items-center">
             <Loader2 className="mr-2 size-4 animate-spin" />
-            Signing you in...
+            {t('signingYouIn')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Processing your {provider} authentication. Please wait...
+            {t('processingProviderAuthentication', { provider })}
           </p>
         </CardContent>
       </Card>
