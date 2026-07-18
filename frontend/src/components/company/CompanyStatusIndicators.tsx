@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Building2, CheckCircle, Clock, AlertCircle } from 'lucide-react'
 import { formatNip } from '@/lib/utils/nip'
@@ -24,16 +25,18 @@ function getStatusIcon(status: ProviderStatus) {
 }
 
 export function CompanyStatusIndicators({ companyResponse, requestTime }: CompanyStatusIndicatorsProps) {
+  const t = useTranslations('companyDetails')
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Building2 className="size-5" />
-          Company Information
+          {t('companyInformation')}
         </CardTitle>
         <CardDescription className="flex items-center justify-between gap-2">
           <span>NIP: {formatNip(companyResponse.data.nip)}</span>
-          <span>Requested at: {new Date(requestTime).toLocaleString()}</span>
+          <span>{t('requestedAt')} {new Date(requestTime).toLocaleString()}</span>
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -44,7 +47,7 @@ export function CompanyStatusIndicators({ companyResponse, requestTime }: Compan
               <span className="font-medium">REGON</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              {getStatusText(companyResponse.metadata.regon?.status || 'unknown')}
+              {getStatusText(companyResponse.metadata.regon?.status || 'unknown', t)}
             </p>
           </div>
           <div className="space-y-2">
@@ -53,7 +56,7 @@ export function CompanyStatusIndicators({ companyResponse, requestTime }: Compan
               <span className="font-medium">MF (Biała Lista)</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              {getStatusText(companyResponse.metadata.mf?.status || 'unknown')}
+              {getStatusText(companyResponse.metadata.mf?.status || 'unknown', t)}
             </p>
           </div>
           <div className="space-y-2">
@@ -62,7 +65,7 @@ export function CompanyStatusIndicators({ companyResponse, requestTime }: Compan
               <span className="font-medium">VIES</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              {getStatusText(companyResponse.metadata.vies?.status || 'unknown')}
+              {getStatusText(companyResponse.metadata.vies?.status || 'unknown', t)}
             </p>
           </div>
         </div>

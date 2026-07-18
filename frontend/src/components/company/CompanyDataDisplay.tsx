@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -28,6 +29,7 @@ interface RegonDataCardProps {
 }
 
 function RegonDataCard({ regonData }: RegonDataCardProps) {
+  const t = useTranslations('companyDetails')
   const parsedData = regonData.detailed_data ? parseRegonDetailedData(regonData.detailed_data) : null;
   const searchData = regonData.search_result?.data;
 
@@ -36,24 +38,24 @@ function RegonDataCard({ regonData }: RegonDataCardProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Building className="size-5" />
-          Dane REGON
+          {t('regonTitle')}
         </CardTitle>
         <CardDescription>
-          Oficjalne dane z rejestru działalności gospodarczej
+          {t('regonDescription')}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
           {/* Basic Company Information */}
           <div className="space-y-3">
-            <h4 className="font-semibold text-lg">Informacje podstawowe</h4>
+            <h4 className="font-semibold text-lg">{t('basicInformation')}</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Nazwa firmy</Label>
+                <Label className="text-sm font-medium text-muted-foreground">{t('companyName')}</Label>
                 <p className="text-sm font-medium">{parsedData?.name || searchData?.Nazwa || 'N/A'}</p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Skrócona nazwa</Label>
+                <Label className="text-sm font-medium text-muted-foreground">{t('shortName')}</Label>
                 <p className="text-sm">{parsedData?.shortName || 'N/A'}</p>
               </div>
               <div>
@@ -65,7 +67,7 @@ function RegonDataCard({ regonData }: RegonDataCardProps) {
                 <p className="text-sm font-mono">{regonData.regon || searchData?.Regon || 'N/A'}</p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Typ podmiotu</Label>
+                <Label className="text-sm font-medium text-muted-foreground">{t('entityType')}</Label>
                 <Badge variant="outline">{getEntityTypeLabel(regonData.entity_type || 'N/A')}</Badge>
               </div>
             </div>
@@ -75,26 +77,26 @@ function RegonDataCard({ regonData }: RegonDataCardProps) {
           <div className="space-y-3">
             <h4 className="font-semibold text-lg flex items-center gap-2">
               <MapPin className="size-4" />
-              Adres siedziby
+              {t('registeredAddress')}
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Pełny adres</Label>
+                <Label className="text-sm font-medium text-muted-foreground">{t('fullAddress')}</Label>
                 <p className="text-sm">
                   {parsedData ? formatRegonAddress(parsedData) :
                    `${searchData?.Ulica || ''} ${searchData?.NrNieruchomosci || ''}, ${searchData?.KodPocztowy || ''} ${searchData?.Miejscowosc || ''}`}
                 </p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Województwo</Label>
+                <Label className="text-sm font-medium text-muted-foreground">{t('voivodeship')}</Label>
                 <p className="text-sm">{parsedData?.address.voivodeship || searchData?.Wojewodztwo || 'N/A'}</p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Powiat</Label>
+                <Label className="text-sm font-medium text-muted-foreground">{t('county')}</Label>
                 <p className="text-sm">{parsedData?.address.county || searchData?.Powiat || 'N/A'}</p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Gmina</Label>
+                <Label className="text-sm font-medium text-muted-foreground">{t('commune')}</Label>
                 <p className="text-sm">{parsedData?.address.commune || searchData?.Gmina || 'N/A'}</p>
               </div>
             </div>
@@ -105,30 +107,30 @@ function RegonDataCard({ regonData }: RegonDataCardProps) {
             <div className="space-y-3">
               <h4 className="font-semibold text-lg flex items-center gap-2">
                 <Phone className="size-4" />
-                Kontakt
+                {t('contact')}
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {parsedData.contact.phone && (
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Telefon</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{t('phone')}</Label>
                     <p className="text-sm font-mono">{formatRegonPhone(parsedData.contact.phone)}</p>
                   </div>
                 )}
                 {parsedData.contact.fax && (
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Faks</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{t('fax')}</Label>
                     <p className="text-sm font-mono">{formatRegonPhone(parsedData.contact.fax)}</p>
                   </div>
                 )}
                 {parsedData.contact.email && (
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Email</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{t('email')}</Label>
                     <p className="text-sm">{parsedData.contact.email}</p>
                   </div>
                 )}
                 {parsedData.contact.website && (
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Strona internetowa</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{t('website')}</Label>
                     <p className="text-sm">
                       <a href={parsedData.contact.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                         {parsedData.contact.website}
@@ -145,30 +147,30 @@ function RegonDataCard({ regonData }: RegonDataCardProps) {
             <div className="space-y-3">
               <h4 className="font-semibold text-lg flex items-center gap-2">
                 <Calendar className="size-4" />
-                Daty ważne
+                {t('importantDates')}
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {parsedData.creationDate && (
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Data powstania</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{t('creationDate')}</Label>
                     <p className="text-sm">{formatRegonDate(parsedData.creationDate)}</p>
                   </div>
                 )}
                 {parsedData.businessStartDate && (
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Rozpoczęcie działalności</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{t('businessStartDate')}</Label>
                     <p className="text-sm">{formatRegonDate(parsedData.businessStartDate)}</p>
                   </div>
                 )}
                 {parsedData.registrationDate && (
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Data wpisu do rejestru</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{t('registrationDate')}</Label>
                     <p className="text-sm">{formatRegonDate(parsedData.registrationDate)}</p>
                   </div>
                 )}
                 {parsedData.lastChangeDate && (
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Ostatnia zmiana</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{t('lastChangeDate')}</Label>
                     <p className="text-sm">{formatRegonDate(parsedData.lastChangeDate)}</p>
                   </div>
                 )}
@@ -181,23 +183,23 @@ function RegonDataCard({ regonData }: RegonDataCardProps) {
             <div className="space-y-3">
               <h4 className="font-semibold text-lg flex items-center gap-2">
                 <FileText className="size-4" />
-                Forma prawna
+                {t('legalForm')}
               </h4>
               <div className="grid grid-cols-1 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Podstawowa forma prawna</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">{t('basicLegalForm')}</Label>
                   <p className="text-sm">{parsedData.legalForm.basicForm}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Szczegółowa forma prawna</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">{t('specificLegalForm')}</Label>
                   <p className="text-sm">{parsedData.legalForm.specificForm}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Forma finansowania</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">{t('financingForm')}</Label>
                   <p className="text-sm">{parsedData.legalForm.financingForm}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Forma własności</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">{t('ownershipForm')}</Label>
                   <p className="text-sm">{parsedData.legalForm.ownershipForm}</p>
                 </div>
               </div>
@@ -209,24 +211,24 @@ function RegonDataCard({ regonData }: RegonDataCardProps) {
             <div className="space-y-3">
               <h4 className="font-semibold text-lg flex items-center gap-2">
                 <Globe className="size-4" />
-                Rejestracja
+                {t('registration')}
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Numer rejestru</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">{t('registryNumber')}</Label>
                   <p className="text-sm font-mono">{parsedData.registration.registryNumber}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Rodzaj rejestru</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">{t('registryType')}</Label>
                   <p className="text-sm">{parsedData.registration.registryType}</p>
                 </div>
                 <div className="md:col-span-2">
-                  <Label className="text-sm font-medium text-muted-foreground">Organ rejestrowy</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">{t('registryAuthority')}</Label>
                   <p className="text-sm">{parsedData.registration.registryAuthority}</p>
                 </div>
                 {parsedData.localUnitsCount !== undefined && (
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Liczba jednostek lokalnych</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{t('localUnitsCount')}</Label>
                     <p className="text-sm">{parsedData.localUnitsCount}</p>
                   </div>
                 )}
@@ -237,9 +239,9 @@ function RegonDataCard({ regonData }: RegonDataCardProps) {
           {/* Fetch Information */}
           <div className="pt-4 border-t">
             <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>Pobrano: {formatRegonDate(regonData.fetched_at)}</span>
+              <span>{t('fetched')} {formatRegonDate(regonData.fetched_at)}</span>
               <Badge variant="outline" className="text-xs">
-                {regonData.report_type || 'Raport podstawowy'}
+                {regonData.report_type || t('basicReport')}
               </Badge>
             </div>
           </div>
@@ -254,25 +256,27 @@ interface MfDataCardProps {
 }
 
 function MfDataCard({ mfData }: MfDataCardProps) {
+  const t = useTranslations('companyDetails')
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ShieldCheck className="size-5" />
-          Dane MF (Biała Lista)
+          {t('mfTitle')}
         </CardTitle>
         <CardDescription>
-          Informacje o podatniku VAT z białej listy Ministerstwa Finansów
+          {t('mfDescription')}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
           {/* Basic Information */}
           <div className="space-y-3">
-            <h4 className="font-semibold text-lg">Informacje podstawowe</h4>
+            <h4 className="font-semibold text-lg">{t('basicInformation')}</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Nazwa firmy</Label>
+                <Label className="text-sm font-medium text-muted-foreground">{t('companyName')}</Label>
                 <p className="text-sm font-medium">{mfData.name || 'N/A'}</p>
               </div>
               <div>
@@ -284,17 +288,17 @@ function MfDataCard({ mfData }: MfDataCardProps) {
                 <p className="text-sm font-mono">{mfData.regon || 'N/A'}</p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">KRS</Label>
+                <Label className="text-sm font-medium text-muted-foreground">{t('krs')}</Label>
                 <p className="text-sm font-mono">{mfData.krs || 'N/A'}</p>
               </div>
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Status VAT</Label>
+                <Label className="text-sm font-medium text-muted-foreground">{t('vatStatus')}</Label>
                 <Badge variant={getMfStatusBadgeVariant(mfData.status_vat || '')}>
                   {formatMfVatStatus(mfData.status_vat || '')}
                 </Badge>
               </div>
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Data sprawdzenia</Label>
+                <Label className="text-sm font-medium text-muted-foreground">{t('checkDate')}</Label>
                 <p className="text-sm">{formatMfDate(mfData.date)}</p>
               </div>
             </div>
@@ -305,30 +309,30 @@ function MfDataCard({ mfData }: MfDataCardProps) {
             <div className="space-y-3">
               <h4 className="font-semibold text-lg flex items-center gap-2">
                 <Calendar className="size-4" />
-                Historia rejestracji VAT
+                {t('vatRegistrationHistory')}
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {mfData.registration_legal_date && (
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Data rejestracji</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{t('vatRegistrationDate')}</Label>
                     <p className="text-sm">{formatMfDate(mfData.registration_legal_date)}</p>
                   </div>
                 )}
                 {mfData.registration_denial_date && (
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Data odmowy rejestracji</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{t('registrationDenialDate')}</Label>
                     <p className="text-sm">{formatMfDate(mfData.registration_denial_date)}</p>
                   </div>
                 )}
                 {mfData.restoration_date && (
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Data przywrócenia</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{t('restorationDate')}</Label>
                     <p className="text-sm">{formatMfDate(mfData.restoration_date)}</p>
                   </div>
                 )}
                 {mfData.removal_date && (
                   <div>
-                    <Label className="text-sm font-medium text-muted-foreground">Data wykreślenia</Label>
+                    <Label className="text-sm font-medium text-muted-foreground">{t('removalDate')}</Label>
                     <p className="text-sm">{formatMfDate(mfData.removal_date)}</p>
                   </div>
                 )}
@@ -341,11 +345,11 @@ function MfDataCard({ mfData }: MfDataCardProps) {
             <div className="space-y-3">
               <h4 className="font-semibold text-lg flex items-center gap-2">
                 <MapPin className="size-4" />
-                Adres działalności
+                {t('businessAddress')}
               </h4>
               <div className="grid grid-cols-1 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Pełny adres</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">{t('fullAddress')}</Label>
                   <p className="text-sm">{formatMfAddress(mfData.address)}</p>
                 </div>
               </div>
@@ -357,11 +361,11 @@ function MfDataCard({ mfData }: MfDataCardProps) {
             <div className="space-y-3">
               <h4 className="font-semibold text-lg flex items-center gap-2">
                 <MapPin className="size-4" />
-                Adres zamieszkania
+                {t('residenceAddress')}
               </h4>
               <div className="grid grid-cols-1 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Pełny adres</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">{t('fullAddress')}</Label>
                   <p className="text-sm">{formatMfAddress(mfData.residence_address)}</p>
                 </div>
               </div>
@@ -373,7 +377,7 @@ function MfDataCard({ mfData }: MfDataCardProps) {
             <div className="space-y-3">
               <h4 className="font-semibold text-lg flex items-center gap-2">
                 <CreditCard className="size-4" />
-                Rachunki bankowe
+                {t('bankAccounts')}
               </h4>
               <div className="space-y-3">
                 {mfData.bank_accounts.map((account, index) => (
@@ -382,7 +386,7 @@ function MfDataCard({ mfData }: MfDataCardProps) {
                 {mfData.has_virtual_accounts && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <AlertCircle className="size-4" />
-                    Posiada rachunki wirtualne
+                    {t('hasVirtualAccounts')}
                   </div>
                 )}
               </div>
@@ -394,14 +398,14 @@ function MfDataCard({ mfData }: MfDataCardProps) {
             <div className="space-y-3">
               <h4 className="font-semibold text-lg flex items-center gap-2">
                 <Users className="size-4" />
-                Reprezentanci
+                {t('representatives')}
               </h4>
               <div className="space-y-2">
                 {mfData.representatives.map((rep, index) => (
                   <div key={index} className="p-3 bg-muted rounded-lg">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       <div>
-                        <Label className="text-xs font-medium text-muted-foreground">Nazwa/Imię i nazwisko</Label>
+                        <Label className="text-xs font-medium text-muted-foreground">{t('nameOrFullName')}</Label>
                         <p className="text-sm">
                           {rep.company_name || `${rep.first_name} ${rep.last_name}`.trim()}
                         </p>
@@ -422,14 +426,14 @@ function MfDataCard({ mfData }: MfDataCardProps) {
             <div className="space-y-3">
               <h4 className="font-semibold text-lg flex items-center gap-2">
                 <Users className="size-4" />
-                Osoby upoważnione
+                {t('authorizedPersons')}
               </h4>
               <div className="space-y-2">
                 {mfData.authorized_persons.map((person, index) => (
                   <div key={index} className="p-3 bg-muted rounded-lg">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       <div>
-                        <Label className="text-xs font-medium text-muted-foreground">Nazwa/Imię i nazwisko</Label>
+                        <Label className="text-xs font-medium text-muted-foreground">{t('nameOrFullName')}</Label>
                         <p className="text-sm">
                           {person.company_name || `${person.first_name} ${person.last_name}`.trim()}
                         </p>
@@ -450,14 +454,14 @@ function MfDataCard({ mfData }: MfDataCardProps) {
             <div className="space-y-3">
               <h4 className="font-semibold text-lg flex items-center gap-2">
                 <Users className="size-4" />
-                Wspólnicy
+                {t('partners')}
               </h4>
               <div className="space-y-2">
                 {mfData.partners.map((partner, index) => (
                   <div key={index} className="p-3 bg-muted rounded-lg">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       <div>
-                        <Label className="text-xs font-medium text-muted-foreground">Nazwa/Imię i nazwisko</Label>
+                        <Label className="text-xs font-medium text-muted-foreground">{t('nameOrFullName')}</Label>
                         <p className="text-sm">
                           {partner.company_name || `${partner.first_name} ${partner.last_name}`.trim()}
                         </p>
@@ -476,9 +480,9 @@ function MfDataCard({ mfData }: MfDataCardProps) {
           {/* Fetch Information */}
           <div className="pt-4 border-t">
             <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>Pobrano: {formatMfDate(mfData.fetched_at)}</span>
+              <span>{t('fetched')} {formatMfDate(mfData.fetched_at)}</span>
               <Badge variant="outline" className="text-xs">
-                {mfData.request_id ? `ID: ${mfData.request_id}` : 'Biała Lista MF'}
+                {mfData.request_id ? `ID: ${mfData.request_id}` : t('mfWhiteList')}
               </Badge>
             </div>
           </div>
@@ -511,11 +515,13 @@ function DataCard({ title, description, data }: DataCardProps) {
 }
 
 function NoDataAlert() {
+  const t = useTranslations('companyDetails')
+
   return (
     <Alert>
       <AlertCircle className="size-4" />
       <AlertDescription>
-        No data available for this NIP. This could be due to rate limiting or the company not being found in the databases.
+        {t('noDataAvailable')}
       </AlertDescription>
     </Alert>
   )
@@ -526,6 +532,8 @@ function hasCompanyData(companyResponse: CompanyResponse): boolean {
 }
 
 export function CompanyDataDisplay({ companyResponse }: CompanyDataDisplayProps) {
+  const t = useTranslations('companyDetails')
+
   return (
     <div className="space-y-6">
       {/* REGON Data */}
@@ -538,7 +546,7 @@ export function CompanyDataDisplay({ companyResponse }: CompanyDataDisplayProps)
         <Alert>
           <AlertCircle className="size-4" />
           <AlertDescription>
-            {companyResponse.data.regon.message || 'Nie znaleziono danych w rejestrze REGON'}
+            {companyResponse.data.regon.message || t('regonNotFound')}
           </AlertDescription>
         </Alert>
       )}
@@ -553,7 +561,7 @@ export function CompanyDataDisplay({ companyResponse }: CompanyDataDisplayProps)
         <Alert>
           <AlertCircle className="size-4" />
           <AlertDescription>
-            {companyResponse.data.mf.message || 'Nie znaleziono danych w białej liście MF'}
+            {companyResponse.data.mf.message || t('mfNotFound')}
           </AlertDescription>
         </Alert>
       )}
@@ -561,8 +569,8 @@ export function CompanyDataDisplay({ companyResponse }: CompanyDataDisplayProps)
       {/* VIES Data */}
       {companyResponse.data.vies && (
         <DataCard
-          title="Dane VIES"
-          description="Informacje o walidacji VAT w UE"
+          title={t('viesTitle')}
+          description={t('viesDescription')}
           data={companyResponse.data.vies}
         />
       )}

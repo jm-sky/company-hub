@@ -37,22 +37,22 @@ export function getProviderStatusInfo(status: string) {
 }
 
 /**
- * Get human-readable status text
+ * Get human-readable status text. `t` should be scoped to the `companyDetails` message namespace.
  */
-export function getStatusText(status: string): string {
+export function getStatusText(status: string, t: (key: string) => string): string {
   switch (status) {
     case 'fresh':
-      return 'Fresh data'
+      return t('statusFresh')
     case 'cached':
-      return 'Cached data'
+      return t('statusCached')
     case 'cached_due_to_rate_limit':
-      return 'Cached (rate limited)'
+      return t('statusCachedRateLimited')
     case 'rate_limited':
-      return 'Rate limited'
+      return t('statusRateLimited')
     case 'error':
-      return 'Error'
+      return t('statusError')
     default:
-      return 'Unknown'
+      return t('statusUnknown')
   }
 }
 
