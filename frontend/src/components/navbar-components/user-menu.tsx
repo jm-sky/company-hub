@@ -9,6 +9,7 @@ import {
 } from "lucide-react"
 import { useRouter } from 'next/navigation'
 
+import { API_DOCS_URL } from '@/config/app'
 import {
   Avatar,
   AvatarFallback,
@@ -73,9 +74,11 @@ export default function UserMenu() {
             <span>Settings</span>
             <Hourglass className="ml-auto size-3 text-muted-foreground" />
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <BookOpenIcon size={16} className="opacity-60" aria-hidden="true" />
-            <span>Documentation</span>
+          <DropdownMenuItem asChild>
+            <a href={API_DOCS_URL} target="_blank" rel="noopener noreferrer">
+              <BookOpenIcon size={16} className="opacity-60" aria-hidden="true" />
+              <span>Documentation</span>
+            </a>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

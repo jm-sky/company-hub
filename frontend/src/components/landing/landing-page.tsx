@@ -16,6 +16,7 @@ import { ButtonLink } from '../ui/button-link'
 import AddressFooter from './address-footer'
 import LandingNav from './landing-nav'
 import { useTranslations, useLocale } from 'next-intl'
+import { API_DOCS_URL } from '@/config/app'
 
 export default function LandingPage() {
   const featuresRef = useRef(null);
@@ -104,7 +105,9 @@ export default function LandingPage() {
               <ButtonLink
                 size="lg"
                 variant="outline"
-                href="/docs"
+                href={API_DOCS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 {t('viewDocumentation')}
               </ButtonLink>
