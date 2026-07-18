@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff, Lock, AlertCircle } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,6 +20,8 @@ export function ResetPasswordContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations('auth');
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const { resetPassword } = useAuth();
@@ -39,7 +42,7 @@ export function ResetPasswordContent() {
         token,
         password: data.password,
       });
-      router.push('/login?message=password-reset-success');
+      router.push(`/${locale}/login?message=password-reset-success`);
     } catch (error) {
       console.error('Reset password failed:', error);
     }
@@ -50,19 +53,19 @@ export function ResetPasswordContent() {
       <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">Invalid reset link</CardTitle>
+            <CardTitle className="text-2xl font-bold">{t('invalidResetLink')}</CardTitle>
             <CardDescription>
-              The password reset link is invalid or has expired.
+              {t('resetLinkInvalidOrExpired')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="text-center space-y-4">
               <p className="text-sm text-muted-foreground">
-                Please request a new password reset link.
+                {t('requestNewResetLink')}
               </p>
               <Button asChild className="w-full">
-                <Link href="/forgot-password">
-                  Request new link
+                <Link href={`/${locale}/forgot-password`}>
+                  {t('requestNewLink')}
                 </Link>
               </Button>
             </div>
@@ -76,20 +79,20 @@ export function ResetPasswordContent() {
     <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Set new password</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('setNewPassword')}</CardTitle>
           <CardDescription>
-            Enter your new password below
+            {t('enterNewPasswordBelow')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
+              <Label htmlFor="password">{t('newPassword')}</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter new password"
+                  placeholder={t('enterNewPassword')}
                   {...register('password')}
                   className={errors.password ? 'border-destructive pr-10' : 'pr-10'}
                 />
@@ -111,12 +114,12 @@ export function ResetPasswordContent() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <Label htmlFor="confirmPassword">{t('confirmNewPassword')}</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="Confirm new password"
+                  placeholder={t('confirmNewPasswordPlaceholder')}
                   {...register('confirmPassword')}
                   className={errors.confirmPassword ? 'border-destructive pr-10' : 'pr-10'}
                 />
@@ -145,12 +148,12 @@ export function ResetPasswordContent() {
               {resetPassword.isPending ? (
                 <>
                   <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                  Resetting...
+                  {t('resetting')}
                 </>
               ) : (
                 <>
                   <Lock className="size-4 mr-2" />
-                  Reset password
+                  {t('resetPasswordButton')}
                 </>
               )}
             </Button>
@@ -159,15 +162,15 @@ export function ResetPasswordContent() {
               <Alert variant="destructive">
                 <AlertCircle className="size-4" />
                 <AlertDescription>
-                  {resetPassword.error instanceof Error ? resetPassword.error.message : 'Failed to reset password. Please try again.'}
+                  {resetPassword.error instanceof Error ? resetPassword.error.message : t('failedToResetPassword')}
                 </AlertDescription>
               </Alert>
             )}
           </form>
 
           <div className="mt-6 text-center">
-            <Link href="/login" className="text-sm text-blue-600 hover:text-blue-500">
-              Back to sign in
+            <Link href={`/${locale}/login`} className="text-sm text-blue-600 hover:text-blue-500">
+              {t('backToSignIn')}
             </Link>
           </div>
         </CardContent>

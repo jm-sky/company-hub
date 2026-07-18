@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff, LogIn, AlertCircle } from 'lucide-react';
+import { useTranslations, useLocale } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -21,6 +22,9 @@ export function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const router = useRouter();
+  const locale = useLocale();
+  const t = useTranslations('auth');
+  const common = useTranslations('common');
   const searchParams = useSearchParams();
   const { login } = useAuth();
   const { data: user, isLoading } = useUser();
@@ -41,31 +45,31 @@ export function LoginContent() {
   useEffect(() => {
     // Redirect authenticated users to dashboard
     if (!isLoading && user) {
-      router.push('/dashboard');
+      router.push(`/${locale}/dashboard`);
     }
-  }, [user, isLoading, router]);
+  }, [user, isLoading, router, locale]);
 
   const sessionExpiredMessage = useMemo(() => {
     const reason = searchParams.get('reason');
     const error = searchParams.get('error');
 
     if (reason === 'session-expired') {
-      return 'Your session has expired. Please log in again.';
+      return t('sessionExpired');
     }
     if (error) {
       switch (error) {
         case 'oauth-denied':
-          return 'OAuth authentication was cancelled.';
+          return t('oauthCancelled');
         case 'oauth-failed':
-          return 'OAuth authentication failed. Please try again.';
+          return t('oauthFailed');
         case 'oauth-invalid':
-          return 'Invalid OAuth parameters. Please try again.';
+          return t('oauthInvalid');
         default:
-          return 'An error occurred. Please try again.';
+          return t('oauthGenericError');
       }
     }
     return null;
-  }, [searchParams]);
+  }, [searchParams, t]);
 
   const onSubmit = async (data: LoginFormData) => {
     try {
@@ -74,13 +78,13 @@ export function LoginContent() {
       if (recaptchaEnabled) {
         recaptchaToken = await getRecaptchaToken('login');
         if (!recaptchaToken) {
-          throw new Error('reCAPTCHA verification failed. Please try again.');
+          throw new Error(t('recaptchaVerificationFailed'));
         }
       }
 
       await login.mutateAsync({ ...data, recaptchaToken });
       setIsRedirecting(true);
-      router.push('/dashboard');
+      router.push(`/${locale}/dashboard`);
     } catch (error) {
       console.error('Login failed:', error);
       setIsRedirecting(false);
@@ -104,9 +108,9 @@ export function LoginContent() {
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">Sign in to <LogoText size="lg" /></CardTitle>
+          <CardTitle className="text-2xl font-bold">{t('signInTo')} <LogoText size="lg" /></CardTitle>
           <CardDescription>
-            Enter your email and password to access your account
+            {t('enterEmailAndPasswordToAccess')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -118,11 +122,11 @@ export function LoginContent() {
           )}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t('enterYourEmail')}
                 {...register('email')}
                 aria-invalid={errors.email ? 'true' : 'false'}
               />
@@ -132,12 +136,12 @@ export function LoginContent() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('password')}</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Enter your password"
+                  placeholder={t('enterYourPassword')}
                   {...register('password')}
                   aria-invalid={errors.password ? 'true' : 'false'}
                 />
@@ -160,8 +164,8 @@ export function LoginContent() {
 
             <div className="flex items-center justify-between">
               <div className="text-sm">
-                <Link href="/forgot-password" className="text-brand hover:text-brand/80">
-                  Forgot your password?
+                <Link href={`/${locale}/forgot-password`} className="text-brand hover:text-brand/80">
+                  {t('forgotYourPassword')}
                 </Link>
               </div>
             </div>
@@ -174,17 +178,17 @@ export function LoginContent() {
               {login.isPending ? (
                 <>
                   <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                  Signing in...
+                  {t('signingIn')}
                 </>
               ) : isRedirecting ? (
                 <>
                   <div className="size-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-                  Redirecting to dashboard...
+                  {t('redirectingToDashboard')}
                 </>
               ) : (
                 <>
                   <LogIn className="size-4 mr-2" />
-                  Sign in
+                  {t('signIn')}
                 </>
               )}
             </Button>
@@ -193,7 +197,7 @@ export function LoginContent() {
               <Alert variant="destructive">
                 <AlertCircle className="size-4" />
                 <AlertDescription>
-                  {login.error instanceof Error ? login.error.message : 'Login failed. Please try again.'}
+                  {login.error instanceof Error ? login.error.message : t('loginFailed')}
                 </AlertDescription>
               </Alert>
             )}
@@ -206,18 +210,18 @@ export function LoginContent() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with
+                  {common('orContinueWith')}
                 </span>
               </div>
             </div>
-            
+
             <OAuthButtons className="mt-4" />
           </div>
 
           <div className="mt-6 text-center text-sm">
-            <span className="text-muted-foreground">Don&apos;t have an account? </span>
-            <Link href="/register" className="text-brand hover:text-brand/80 font-medium">
-              Sign up
+            <span className="text-muted-foreground">{t('dontHaveAccount')} </span>
+            <Link href={`/${locale}/register`} className="text-brand hover:text-brand/80 font-medium">
+              {t('signUp')}
             </Link>
           </div>
         </CardContent>

@@ -73,7 +73,42 @@
     "createAPassword": "Create a password",
     "confirmYourPassword": "Confirm your password",
     "registrationFailed": "Registration failed. Please try again.",
-    "recaptchaVerificationFailed": "reCAPTCHA verification failed. Please try again."
+    "recaptchaVerificationFailed": "reCAPTCHA verification failed. Please try again.",
+    "signInTo": "Sign in to",
+    "enterEmailAndPasswordToAccess": "Enter your email and password to access your account",
+    "enterYourPassword": "Enter your password",
+    "forgotYourPassword": "Forgot your password?",
+    "signingIn": "Signing in...",
+    "redirectingToDashboard": "Redirecting to dashboard...",
+    "loginFailed": "Login failed. Please try again.",
+    "sessionExpired": "Your session has expired. Please log in again.",
+    "oauthCancelled": "OAuth authentication was cancelled.",
+    "oauthFailed": "OAuth authentication failed. Please try again.",
+    "oauthInvalid": "Invalid OAuth parameters. Please try again.",
+    "oauthGenericError": "An error occurred. Please try again.",
+    "invalidResetLink": "Invalid reset link",
+    "resetLinkInvalidOrExpired": "The password reset link is invalid or has expired.",
+    "requestNewResetLink": "Please request a new password reset link.",
+    "requestNewLink": "Request new link",
+    "setNewPassword": "Set new password",
+    "enterNewPasswordBelow": "Enter your new password below",
+    "newPassword": "New Password",
+    "enterNewPassword": "Enter new password",
+    "confirmNewPassword": "Confirm New Password",
+    "confirmNewPasswordPlaceholder": "Confirm new password",
+    "resetting": "Resetting...",
+    "resetPasswordButton": "Reset password",
+    "failedToResetPassword": "Failed to reset password. Please try again.",
+    "backToSignIn": "Back to sign in",
+    "checkYourEmail": "Check your email",
+    "weveSentResetLink": "We've sent a password reset link to",
+    "didntReceiveEmail": "Didn't receive the email? Check your spam folder or try again.",
+    "tryAgain": "Try again",
+    "resetYourPassword": "Reset your password",
+    "enterEmailForResetLink": "Enter your email address and we'll send you a link to reset your password",
+    "sending": "Sending...",
+    "sendResetLink": "Send reset link",
+    "failedToSendResetLink": "Failed to send reset link. Please try again."
   },
   "company": {
     "search": "Search Companies",
@@ -99,7 +134,10 @@
     "enterPolishNip": "Enter a Polish NIP to get company information from official sources",
     "nipTaxIdentificationNumber": "NIP (Tax Identification Number)",
     "nipPlaceholder": "e.g., 123-456-78-90 or 1234567890",
-    "nipValidationMessage": "NIP should be 10 digits long. Spaces and dashes are automatically removed."
+    "nipValidationMessage": "NIP should be 10 digits long. Spaces and dashes are automatically removed.",
+    "searchPageTitle": "Company Search",
+    "searchPageSubtitle": "Search for Polish companies by NIP (Tax Identification Number)",
+    "errorSearchingForCompany": "Error searching for company:"
   },
   "companyDetails": {
     "companyInformation": "Company Information",
@@ -237,6 +275,7 @@
     "networkError": "Network error. Please check your connection.",
     "unauthorized": "You are not authorized to perform this action.",
     "notFound": "The requested resource was not found.",
-    "validationError": "Please check your input and try again."
+    "validationError": "Please check your input and try again.",
+    "unknownError": "Unknown error"
   }
 }

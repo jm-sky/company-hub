@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AlertCircle } from 'lucide-react'
@@ -10,6 +11,8 @@ import { CompanyStatusIndicators } from '@/components/company/CompanyStatusIndic
 import { CompanyDataDisplay } from '@/components/company/CompanyDataDisplay'
 
 export default function CompanySearchPage() {
+  const t = useTranslations('company')
+  const errors = useTranslations('errors')
   const [queriedNip, setQueriedNip] = useState('')
   const [requestTime, setRequestTime] = useState(0)
 
@@ -28,9 +31,9 @@ export default function CompanySearchPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">Company Search</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t('searchPageTitle')}</h1>
         <p className="text-muted-foreground">
-          Search for Polish companies by NIP (Tax Identification Number)
+          {t('searchPageSubtitle')}
         </p>
       </div>
 
@@ -47,7 +50,7 @@ export default function CompanySearchPage() {
         <Alert variant="destructive">
           <AlertCircle className="size-4" />
           <AlertDescription>
-            Error searching for company: {error instanceof Error ? error.message : 'Unknown error'}
+            {t('errorSearchingForCompany')} {error instanceof Error ? error.message : errors('unknownError')}
           </AlertDescription>
         </Alert>
       )}

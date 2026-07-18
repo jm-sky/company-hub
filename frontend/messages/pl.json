@@ -73,7 +73,42 @@
     "createAPassword": "Utwórz hasło",
     "confirmYourPassword": "Potwierdź swoje hasło",
     "registrationFailed": "Rejestracja nie powiodła się. Spróbuj ponownie.",
-    "recaptchaVerificationFailed": "Weryfikacja reCAPTCHA nie powiodła się. Spróbuj ponownie."
+    "recaptchaVerificationFailed": "Weryfikacja reCAPTCHA nie powiodła się. Spróbuj ponownie.",
+    "signInTo": "Zaloguj się do",
+    "enterEmailAndPasswordToAccess": "Wprowadź email i hasło, aby uzyskać dostęp do konta",
+    "enterYourPassword": "Wprowadź swoje hasło",
+    "forgotYourPassword": "Zapomniałeś hasła?",
+    "signingIn": "Logowanie...",
+    "redirectingToDashboard": "Przekierowywanie do panelu...",
+    "loginFailed": "Logowanie nie powiodło się. Spróbuj ponownie.",
+    "sessionExpired": "Twoja sesja wygasła. Zaloguj się ponownie.",
+    "oauthCancelled": "Logowanie OAuth zostało anulowane.",
+    "oauthFailed": "Logowanie OAuth nie powiodło się. Spróbuj ponownie.",
+    "oauthInvalid": "Nieprawidłowe parametry OAuth. Spróbuj ponownie.",
+    "oauthGenericError": "Wystąpił błąd. Spróbuj ponownie.",
+    "invalidResetLink": "Nieprawidłowy link resetujący",
+    "resetLinkInvalidOrExpired": "Link do resetowania hasła jest nieprawidłowy lub wygasł.",
+    "requestNewResetLink": "Poproś o nowy link do resetowania hasła.",
+    "requestNewLink": "Poproś o nowy link",
+    "setNewPassword": "Ustaw nowe hasło",
+    "enterNewPasswordBelow": "Wprowadź poniżej nowe hasło",
+    "newPassword": "Nowe hasło",
+    "enterNewPassword": "Wprowadź nowe hasło",
+    "confirmNewPassword": "Potwierdź nowe hasło",
+    "confirmNewPasswordPlaceholder": "Potwierdź nowe hasło",
+    "resetting": "Resetowanie...",
+    "resetPasswordButton": "Zresetuj hasło",
+    "failedToResetPassword": "Nie udało się zresetować hasła. Spróbuj ponownie.",
+    "backToSignIn": "Powrót do logowania",
+    "checkYourEmail": "Sprawdź swoją skrzynkę email",
+    "weveSentResetLink": "Wysłaliśmy link do resetowania hasła na adres",
+    "didntReceiveEmail": "Nie otrzymałeś wiadomości? Sprawdź folder spam lub spróbuj ponownie.",
+    "tryAgain": "Spróbuj ponownie",
+    "resetYourPassword": "Zresetuj swoje hasło",
+    "enterEmailForResetLink": "Wprowadź swój adres email, a wyślemy Ci link do resetowania hasła",
+    "sending": "Wysyłanie...",
+    "sendResetLink": "Wyślij link resetujący",
+    "failedToSendResetLink": "Nie udało się wysłać linku resetującego. Spróbuj ponownie."
   },
   "company": {
     "search": "Szukaj firm",
@@ -99,7 +134,10 @@
     "enterPolishNip": "Wprowadź polski NIP, aby uzyskać informacje o firmie z oficjalnych źródeł",
     "nipTaxIdentificationNumber": "NIP (Numer Identyfikacji Podatkowej)",
     "nipPlaceholder": "np. 123-456-78-90 lub 1234567890",
-    "nipValidationMessage": "NIP powinien mieć 10 cyfr. Spacje i myślniki są automatycznie usuwane."
+    "nipValidationMessage": "NIP powinien mieć 10 cyfr. Spacje i myślniki są automatycznie usuwane.",
+    "searchPageTitle": "Wyszukiwanie firm",
+    "searchPageSubtitle": "Wyszukaj polskie firmy po numerze NIP",
+    "errorSearchingForCompany": "Błąd podczas wyszukiwania firmy:"
   },
   "companyDetails": {
     "companyInformation": "Informacje o firmie",
@@ -237,6 +275,7 @@
     "networkError": "Błąd sieci. Sprawdź połączenie.",
     "unauthorized": "Nie masz uprawnień do wykonania tej akcji.",
     "notFound": "Nie znaleziono żądanego zasobu.",
-    "validationError": "Sprawdź wprowadzone dane i spróbuj ponownie."
+    "validationError": "Sprawdź wprowadzone dane i spróbuj ponownie.",
+    "unknownError": "Nieznany błąd"
   }
 }
