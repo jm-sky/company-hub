@@ -26,6 +26,9 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.3
         version: 1.2.3(@types/react@19.2.17)(react@19.2.7)
+      '@serwist/turbopack':
+        specifier: ^9.5.11
+        version: 9.5.11(esbuild@0.28.1)(next@16.2.10(@babel/core@7.29.7)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)(typescript@5.8.3)
       '@tanstack/react-query':
         specifier: ^5.101.2
         version: 5.101.2(react@19.2.7)
@@ -83,6 +86,9 @@ importers:
       react-hook-form:
         specifier: ^7.60.0
         version: 7.60.0(react@19.2.7)
+      serwist:
+        specifier: ^9.5.11
+        version: 9.5.11(browserslist@4.28.2)(typescript@5.8.3)
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.3.1
@@ -93,9 +99,6 @@ importers:
       '@eslint/eslintrc':
         specifier: ^3
         version: 3.3.1
-      '@serwist/turbopack':
-        specifier: ^9.5.11
-        version: 9.5.11(esbuild@0.28.1)(next@16.2.10(@babel/core@7.29.7)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)(typescript@5.8.3)
       '@tailwindcss/postcss':
         specifier: ^4.3.2
         version: 4.3.2
@@ -117,9 +120,6 @@ importers:
       eslint-config-next:
         specifier: 16.2.10
         version: 16.2.10(@typescript-eslint/parser@8.64.0(eslint@9.31.0(jiti@2.7.0))(typescript@5.8.3))(eslint@9.31.0(jiti@2.7.0))(typescript@5.8.3)
-      serwist:
-        specifier: ^9.5.11
-        version: 9.5.11(browserslist@4.28.6)(typescript@5.8.3)
       sharp:
         specifier: ^0.35.3
         version: 0.35.3(@types/node@20.19.7)
@@ -5310,10 +5310,6 @@ snapshots:
     optionalDependencies:
       browserslist: 4.28.2
 
-  '@serwist/utils@9.5.11(browserslist@4.28.6)':
-    optionalDependencies:
-      browserslist: 4.28.6
-
   '@serwist/window@9.5.11(browserslist@4.28.2)(typescript@5.8.3)':
     dependencies:
       '@types/trusted-types': 2.0.7
@@ -7373,15 +7369,6 @@ snapshots:
   serwist@9.5.11(browserslist@4.28.2)(typescript@5.8.3):
     dependencies:
       '@serwist/utils': 9.5.11(browserslist@4.28.2)
-      idb: 8.0.3
-    optionalDependencies:
-      typescript: 5.8.3
-    transitivePeerDependencies:
-      - browserslist
-
-  serwist@9.5.11(browserslist@4.28.6)(typescript@5.8.3):
-    dependencies:
-      '@serwist/utils': 9.5.11(browserslist@4.28.6)
       idb: 8.0.3
     optionalDependencies:
       typescript: 5.8.3
