@@ -38,6 +38,8 @@ services:
       - RECAPTCHA_ENABLED=${RECAPTCHA_ENABLED}
       - RECAPTCHA_MIN_SCORE=${RECAPTCHA_MIN_SCORE}
       - RECAPTCHA_TIMEOUT=${RECAPTCHA_TIMEOUT}
+      - HEALTH_DETAILS_TOKEN=${HEALTH_DETAILS_TOKEN}
+      - FRONTEND_URL=${FRONTEND_URL:-http://frontend:3000/api/health}
     depends_on:
       - db
       - redis

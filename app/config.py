@@ -2,6 +2,9 @@ from pydantic_settings import BaseSettings
 import secrets
 
 class Settings(BaseSettings):
+    # Application
+    app_version: str = "1.0.0"
+
     # Environment
     environment: str = "development"
 
@@ -66,6 +69,10 @@ class Settings(BaseSettings):
     google_client_id: str = ""
     google_client_secret: str = ""
     google_redirect_uri: str = "http://localhost:3000/auth/callback/google"
+
+    # Ops Monitor — detailed health endpoint
+    health_details_token: str = ""
+    frontend_url: str = ""
 
     # reCAPTCHA Configuration
     recaptcha_public_key: str = ""

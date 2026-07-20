@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
+from app.api.health_router import health_router
 from app.api.v1.router import api_router
 from app.config import settings
 from app.exception_handlers import http_exception_handler
@@ -43,6 +44,7 @@ app.add_middleware(
 # Add HTTP exception handler to ensure CORS headers are included
 app.add_exception_handler(HTTPException, http_exception_handler)
 
+app.include_router(health_router, prefix="/api")
 app.include_router(api_router, prefix="/api/v1")
 
 @app.get("/")
