@@ -60,7 +60,7 @@ prometheus-client==0.25.0
     # via
     #   -r requirements-prod.in
     #   prometheus-fastapi-instrumentator
-prometheus-fastapi-instrumentator==8.0.2
+prometheus-fastapi-instrumentator==8.1.0
     # via -r requirements-prod.in
 psycopg2-binary==2.9.12
     # via -r requirements.in
