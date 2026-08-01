@@ -9,7 +9,8 @@
 
 ## 🚀 Features
 
-- [x] **Multi-source data aggregation**: REGON (GUS), MF (Biała Lista), VIES, and IBAN enrichment
+- [x] **Multi-source data aggregation**: REGON (GUS), MF (Biała Lista), and IBAN enrichment
+- [ ] **VIES** (EU VAT validation) — documented, provider disabled (`enabled=False`), TODO stub
 - [x] **Intelligent caching**: 1-day TTL with premium bypass options
 - [x] **Smart rate limiting**: Time-based limits respecting external API constraints
 - [ ] **Webhook notifications**: Real-time callbacks for data changes
