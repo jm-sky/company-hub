@@ -81,7 +81,7 @@ python-dotenv==1.2.2
     # via pydantic-settings
 python-multipart==0.0.32
     # via -r requirements.in
-redis==8.0.1
+redis==8.1.0
     # via -r requirements.in
 slowapi==0.1.10
     # via -r requirements.in
