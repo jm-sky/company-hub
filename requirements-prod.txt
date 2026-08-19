@@ -85,7 +85,7 @@ redis==8.0.1
     # via -r requirements.in
 slowapi==0.1.10
     # via -r requirements.in
-sqlalchemy==2.0.51
+sqlalchemy==2.0.52
     # via
     #   -r requirements.in
     #   alembic
